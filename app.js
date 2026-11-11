@@ -5,7 +5,7 @@ let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
-// मास्टर आंसर की (खाली अवस्था)
+// Master answer key (Empty by default)
 let answerKey = {};
 
 // ==========================================
@@ -86,11 +86,11 @@ function showTypewriterError(text) {
   box.style.display = "block";
   box.innerHTML = `
     <div style="font-size: 40px; margin-bottom: 12px;">🚫</div>
-    <div style="font-size: 16px; font-weight: 800; color: #ef4444; margin-bottom: 10px;">अमान्य OMR दस्तावेज़</div>
+    <div style="font-size: 16px; font-weight: 800; color: #ef4444; margin-bottom: 10px;">Aamanya OMR Dastaawez</div>
     <div id="typewriterTextTarget" style="font-size: 13.5px; line-height: 1.6; min-height: 48px; color: #cbd5e1;"></div>
     <button onclick="document.getElementById('omrValidationErrorBox').style.display='none'" 
             style="margin-top: 18px; padding: 10px 24px; background: #ef4444; color: #fff; border: none; border-radius: 8px; font-weight: 800; cursor: pointer;">
-      ठीक है (OK)
+      Theek Hai (OK)
     </button>
   `;
 
@@ -216,16 +216,16 @@ function setQuestions(num) {
 }
 
 // ==========================================
-// 4. SCAN EXECUTION (With 12s Hard Timeout)
+// 4. SCAN EXECUTION (With 25s Hard Timeout Safe Buffer)
 // ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
-    showToast("कृपया पहले OMR शीट की फ़ाइल चुनें!", "warning");
+    showToast("Kripya pehle OMR sheet ki file chunein!", "warning");
     throw new Error("No file selected");
   }
 
   if (Object.keys(answerKey).length === 0) {
-    showToast("कृपया मास्टर कुंजी में सही उत्तर सेट करें!", "warning");
+    showToast("Kripya master key mein sahi uttar set karein!", "warning");
     throw new Error("No answer key set");
   }
 
@@ -239,9 +239,9 @@ async function executeScan() {
   fd.append("answer_key", JSON.stringify(answerKey));
   fd.append("total_q", questionCount);
 
-  // 12-सेकंड का हार्ड टाइमआउट कंट्रोलर ताकि 5 मिनट तक पहिया न घूमे
+  // 25-Second Safe Abort Controller (Prevents infinite hang while allowing full processing)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/scan`, {
@@ -255,19 +255,19 @@ async function executeScan() {
     const data = await res.json();
 
     if (!res.ok) {
-      const msg = data.detail || "शीट जाँचने में समस्या आई।";
+      const msg = data.detail || "Sheet jaanchne mein samasya aayi.";
       showToast(msg, "error");
       throw new Error(msg);
     }
 
     if (data.is_omr === false) {
-      showTypewriterError(data.message || "यह OMR शीट नहीं है! कृपया वैध परीक्षा OMR उत्तर पत्रक अपलोड करें।");
+      showTypewriterError(data.message || "Yeh OMR sheet nahi hai! Kripya vaidh pariksha OMR uttar patrak upload karein.");
       throw new Error("Invalid OMR document");
     }
 
     evaluationResult = data;
     renderResults(data);
-    showToast("मूल्यांकन सफलतापूर्वक संपन्न हुआ!", "success");
+    showToast("Moolyankan safalta-poorvak sampann hua!", "success");
 
     if (resPanel) {
       resPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -278,9 +278,9 @@ async function executeScan() {
   } catch (err) {
     clearTimeout(timeoutId);
     if (err.name === 'AbortError') {
-      showToast("सर्वर टाइमआउट (12s सीमा पार)! सर्वर व्यस्त है, पुनः प्रयास करें।", "error");
+      showToast("Server response time out (25s limit). Server vyast hai, kripya punah prayas karein.", "error");
     } else if (err.message !== "Invalid OMR document") {
-      showToast(err.message || "सर्वर प्रतिक्रिया में त्रुटि।", "error");
+      showToast(err.message || "Server pratikriya mein truti.", "error");
     }
     throw err;
   }
@@ -305,7 +305,7 @@ function renderResults(data) {
   document.getElementById("cntInv").innerText = s.invalid;
   document.getElementById("cntSkp").innerText = s.skipped;
 
-  let tbl = `<table><tr><th>Q.No</th><th>छात्र उत्तर</th><th>सही उत्तर</th><th>परिणाम</th></tr>`;
+  let tbl = `<table><tr><th>Q.No</th><th>Chhatra Uttar</th><th>Sahi Uttar</th><th>Parinam</th></tr>`;
   data.details.forEach(row => {
     let cls = "status-skp";
     if (row.Status === "सही") cls = "status-cor";
@@ -332,7 +332,7 @@ function renderResults(data) {
 // ==========================================
 async function downloadExcel() {
   if (!evaluationResult) {
-    showToast("पहले OMR शीट स्कैन करें!", "warning");
+    showToast("Pehle OMR sheet scan karein!", "warning");
     return;
   }
 
@@ -345,7 +345,7 @@ async function downloadExcel() {
       body: fd
     });
 
-    if (!res.ok) throw new Error("Excel फ़ाइल जनरेट नहीं हुई");
+    if (!res.ok) throw new Error("Excel file generate nahi hui");
 
     const blob = await res.blob();
     const a = document.createElement("a");
@@ -354,9 +354,9 @@ async function downloadExcel() {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    showToast("एक्सेल मार्कशीट डाउनलोड हो गई!", "success");
+    showToast("Excel marksheet download ho gayi!", "success");
   } catch (err) {
-    showToast("Excel मार्कशीट डाउनलोड करने में त्रुटि आई।", "error");
+    showToast("Excel marksheet download karne mein truti aayi.", "error");
   }
 }
 
@@ -365,14 +365,14 @@ async function downloadExcel() {
 // ==========================================
 function downloadStudentPDF() {
   if (!evaluationResult) {
-    showToast("पहले OMR शीट स्कैन करें!", "warning");
+    showToast("Pehle OMR sheet scan karein!", "warning");
     return;
   }
 
   if (typeof generateStudentPDF === "function") {
     generateStudentPDF(evaluationResult);
   } else {
-    showToast("PDF Engine लोड नहीं हुआ। कृपया पेज रिफ्रेश करें।", "error");
+    showToast("PDF Engine load nahi hua. Kripya page refresh karein.", "error");
   }
 }
 
