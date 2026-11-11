@@ -5,11 +5,57 @@ let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
-// मास्टर आंसर की का स्टेट (डिफ़ॉल्ट 20 सवाल)
-let answerKey = {
-  1:'B', 2:'A', 3:'C', 4:'B', 5:'C', 6:'D', 7:'A', 8:'C', 9:'B', 10:'D',
-  11:'C', 12:'A', 13:'D', 14:'B', 15:'C', 16:'A', 17:'D', 18:'C', 19:'A', 20:'A'
-};
+// मास्टर आंसर की खाली रखी गई है (कोई डिफ़ॉल्ट उत्तर नहीं)
+let answerKey = {};
+
+// ==========================================
+// 0. CUSTOM TOAST NOTIFICATION (No Default Alert)
+// ==========================================
+function showToast(message, type = "info") {
+  let toast = document.getElementById("proToastNotification");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "proToastNotification";
+    toast.style.position = "fixed";
+    toast.style.top = "20px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.zIndex = "99999";
+    toast.style.minWidth = "280px";
+    toast.style.maxWidth = "90%";
+    toast.style.padding = "12px 18px";
+    toast.style.borderRadius = "10px";
+    toast.style.fontSize = "13px";
+    toast.style.fontWeight = "700";
+    toast.style.textAlign = "center";
+    toast.style.boxShadow = "0 8px 24px rgba(0,0,0,0.35)";
+    toast.style.transition = "opacity 0.3s ease, top 0.3s ease";
+    document.body.appendChild(toast);
+  }
+
+  if (type === "error") {
+    toast.style.background = "#dc2626";
+    toast.style.color = "#ffffff";
+  } else if (type === "success") {
+    toast.style.background = "#16a34a";
+    toast.style.color = "#ffffff";
+  } else if (type === "warning") {
+    toast.style.background = "#d97706";
+    toast.style.color = "#ffffff";
+  } else {
+    toast.style.background = "#1e40af";
+    toast.style.color = "#ffffff";
+  }
+
+  toast.innerText = message;
+  toast.style.opacity = "1";
+  toast.style.top = "25px";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.top = "-50px";
+  }, 4000);
+}
 
 // ==========================================
 // 1. MASTER KEY MATRIX UI BUILDER (5 to 100 Q)
@@ -22,7 +68,7 @@ function renderMatrix() {
   const opts = ["A", "B", "C", "D"];
 
   for (let i = 1; i <= questionCount; i++) {
-    const activeOpt = answerKey[i] || "A";
+    const activeOpt = answerKey[i] || "";
     html += `
       <div class="matrix-row">
         <div class="q-label">Q${i < 10 ? '0' + i : i}</div>
@@ -40,7 +86,12 @@ function renderMatrix() {
 }
 
 function selectOption(q, opt) {
-  answerKey[q] = opt;
+  // अगर वही विकल्प दोबारा दबाया जाए तो अनसेलेक्ट (खाली) हो जाएगा
+  if (answerKey[q] === opt) {
+    delete answerKey[q];
+  } else {
+    answerKey[q] = opt;
+  }
   renderMatrix();
 }
 
@@ -52,7 +103,6 @@ function setQuestions(num) {
 
   questionCount = num;
 
-  // टैब बटन्स की एक्टिव क्लास अपडेट करना
   document.querySelectorAll('.tab-item').forEach(btn => {
     btn.classList.remove('active');
     const text = btn.innerText;
@@ -60,11 +110,6 @@ function setQuestions(num) {
       btn.classList.add('active');
     }
   });
-
-  // नई संख्या के लिए डिफ़ॉल्ट 'A' सेट करना
-  for (let i = 1; i <= num; i++) {
-    if (!answerKey[i]) answerKey[i] = "A";
-  }
 
   renderMatrix();
 }
@@ -105,11 +150,17 @@ function handleFilePreview(e) {
 }
 
 // ==========================================
-// 3. SCAN EXECUTION (RENDER BACKEND API)
+// 3. SCAN EXECUTION
 // ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
-    alert("कृपया पहले OMR शीट की फ़ाइल चुनें!");
+    showToast("कृपया पहले OMR शीट की फ़ाइल चुनें!", "warning");
+    return;
+  }
+
+  // जाँचना कि कम से कम कुछ सवालों की आंसर की सेट है या नहीं
+  if (Object.keys(answerKey).length === 0) {
+    showToast("कृपया मास्टर आंसर की में कम से कम सही उत्तर सेट करें!", "warning");
     return;
   }
 
@@ -134,12 +185,14 @@ async function executeScan() {
     if (btnScan) btnScan.disabled = false;
 
     if (!res.ok) {
-      alert("Error: " + (data.detail || "Sheet चेक करने में समस्या आई"));
-      throw new Error(data.detail || "API Error");
+      const msg = data.detail || "शीट जाँचने में समस्या आई।";
+      showToast(msg, "error");
+      throw new Error(msg);
     }
 
     evaluationResult = data;
     renderResults(data);
+    showToast("मूल्यांकन सफलतापूर्वक संपन्न हुआ!", "success");
 
     if (resPanel) {
       resPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -147,7 +200,7 @@ async function executeScan() {
 
   } catch (err) {
     if (btnScan) btnScan.disabled = false;
-    alert("सर्वर कनेक्ट नहीं हुआ। Render सर्वर को शुरू होने में 30 सेकंड का समय लग सकता है।");
+    showToast("सर्वर प्रतिक्रिया में विलंब या त्रुटि। पुनः प्रयास करें।", "error");
     throw err;
   }
 }
@@ -158,7 +211,6 @@ async function executeScan() {
 function renderResults(data) {
   const s = data.summary;
   
-  // छात्र का नाम और रोल नंबर प्रदर्शित करना
   const nameEl = document.getElementById("resStudentName");
   const rollEl = document.getElementById("resRollNo");
   if (nameEl) nameEl.innerText = data.student_name || "STUDENT";
@@ -197,7 +249,7 @@ function renderResults(data) {
 // ==========================================
 async function downloadExcel() {
   if (!evaluationResult) {
-    alert("पहले OMR शीट स्कैन करें!");
+    showToast("पहले OMR शीट स्कैन करें!", "warning");
     return;
   }
 
@@ -219,8 +271,9 @@ async function downloadExcel() {
     document.body.appendChild(a);
     a.click();
     a.remove();
+    showToast("एक्सेल मार्कशीट डाउनलोड हो गई!", "success");
   } catch (err) {
-    alert("Excel मार्कशीट डाउनलोड करने में त्रुटि आई।");
+    showToast("Excel मार्कशीट डाउनलोड करने में त्रुटि आई।", "error");
   }
 }
 
@@ -229,19 +282,17 @@ async function downloadExcel() {
 // ==========================================
 function downloadStudentPDF() {
   if (!evaluationResult) {
-    alert("पहले OMR शीट स्कैन करें!");
+    showToast("पहले OMR शीट स्कैन करें!", "warning");
     return;
   }
 
-  // सीधे pdf_engine.js के फंक्शन को कॉल करना
   if (typeof generateStudentPDF === "function") {
     generateStudentPDF(evaluationResult);
   } else {
-    alert("PDF Engine लोड नहीं हुआ। कृपया पेज रिफ्रेश करें।");
+    showToast("PDF Engine लोड नहीं हुआ। कृपया पेज रिफ्रेश करें।", "error");
   }
 }
 
-// पेज लोड पर ग्रिड शुरू करना
 window.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
 });
