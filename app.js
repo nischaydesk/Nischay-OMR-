@@ -1,6 +1,7 @@
 // बैकएंड डिप्लॉय होने पर यहाँ Render का URL आएगा (जैसे 'https://nischay-omr-api.onrender.com')
 // लोकल टेस्ट के लिए 'http://127.0.0.1:8000'
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "https://nischay-omr.onrender.com";
+
 
 let questionCount = 20;
 let answerKey = {
