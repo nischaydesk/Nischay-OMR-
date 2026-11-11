@@ -3,70 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nischay OMR Suite - मास्टर पोर्टल</title>
+  <title>Nischay OMR Scanner</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* प्रीव्यू और फ़ाइल चयन के लिए अतिरिक्त आधुनिक शैलियाँ */
-    .file-dropzone {
+    .upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .custom-file-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      cursor: pointer;
+      text-align: center;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    .btn-file {
+      background: #1e40af;
+    }
+    .btn-camera-custom {
+      background: #0f172a;
+    }
+    .native-hidden-input {
+      display: none !important;
+    }
+    .file-status-box {
       border: 2px dashed #94a3b8;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 12px;
       text-align: center;
       background: #f8fafc;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: 0.2s ease;
+      font-size: 13px;
+      color: #475569;
     }
-    .file-dropzone:active {
-      background: #f1f5f9;
-      border-color: #2563eb;
-    }
-    .file-name-badge {
+    .file-badge {
       display: inline-block;
-      margin-top: 8px;
-      padding: 4px 10px;
+      margin-top: 6px;
+      padding: 4px 12px;
       background: #e2e8f0;
-      color: #1e293b;
-      font-size: 12px;
-      font-weight: 600;
+      color: #0f172a;
       border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
       word-break: break-all;
     }
-    .preview-box {
+    .preview-wrapper {
       display: none;
-      margin: 12px 0;
-      text-align: center;
+      margin-top: 10px;
+      background: #000;
       border-radius: 8px;
       overflow: hidden;
-      background: #000;
-      max-height: 240px;
+      max-height: 250px;
+      text-align: center;
     }
-    .preview-box img {
+    .preview-wrapper img {
       max-width: 100%;
-      max-height: 240px;
+      max-height: 250px;
       object-fit: contain;
       display: block;
-      margin: auto;
+      margin: 0 auto;
     }
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .btn-row .btn {
-      margin-top: 0;
-    }
-    .btn-scan-action {
+    .btn-scan-main {
+      width: 100%;
+      padding: 15px;
       background: #2563eb;
       color: #ffffff;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
-      padding: 14px;
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
-    .btn-scan-action:disabled {
-      background: #94a3b8;
-      box-shadow: none;
+    .btn-scan-main:disabled {
+      background: #cbd5e1;
+      color: #64748b;
       cursor: not-allowed;
+      box-shadow: none;
     }
   </style>
 </head>
@@ -75,89 +99,78 @@
 <div class="app-wrapper">
   <header>
     <h1>Nischay OMR Scanner</h1>
-    <p>विद्यालय एवं कोचिंग परीक्षा मूल्यांकन पोर्टल</p>
+    <p>Vidyalay Evam Coaching Pariksha Mulyankan Portal</p>
   </header>
 
-  <!-- प्रश्न संख्या चयन टैब्स -->
   <div class="tabs">
-    <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(80)">80 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
+    <div class="tab-btn active" onclick="setQuestions(20)">20 Sawal</div>
+    <div class="tab-btn" onclick="setQuestions(50)">50 Sawal</div>
+    <div class="tab-btn" onclick="setQuestions(80)">80 Sawal</div>
+    <div class="tab-btn" onclick="setQuestions(100)">100 Sawal</div>
   </div>
 
-  <!-- 1. मास्टर आंसर की -->
   <div class="card">
     <div class="card-title">
-      <span>1. मास्टर आंसर की (गोला टैप करें)</span>
-      <span style="font-size:11px; color:#64748b;">टैप करके उत्तर बदलें</span>
+      <span>1. Master Answer Key (Gola Chhuen)</span>
+      <span style="font-size:11px; color:#64748b;">Tap karke set karein</span>
     </div>
     <div class="bubble-matrix" id="matrixContainer"></div>
   </div>
 
-  <!-- 2. OMR कॉपी अपलोड एवं प्रीव्यू -->
   <div class="card">
-    <div class="card-title">2. विद्यार्थी की OMR कॉपी चुनें</div>
+    <div class="card-title">2. Student Ki OMR Sheet Upload Karein</div>
 
-    <!-- फ़ाइल चयन (बिना स्वतः स्कैन के) -->
-    <input type="file" id="fileUpload" accept="*/*" style="display:none;" onchange="handleFilePreview(event)">
-    <input type="file" id="cameraUpload" accept="image/*" capture="environment" style="display:none;" onchange="handleFilePreview(event)">
+    <div class="upload-container">
+      <label class="custom-file-btn btn-file">
+        📁 Device Files / Documents Chunein
+        <input type="file" id="fileUpload" class="native-hidden-input" onchange="handleFilePreview(event)">
+      </label>
 
-    <div class="btn-row">
-      <button type="button" class="btn btn-primary" onclick="openFilePicker()">
-        📁 डिवाइस फ़ाइलें चुनें
-      </button>
-      <button type="button" class="btn btn-dark" onclick="openCameraPicker()">
-        📷 कैमरा खोलें
-      </button>
-    </div>
+      <label class="custom-file-btn btn-camera-custom">
+        📷 Camera Se Photo Kheenchein
+        <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="native-hidden-input" onchange="handleFilePreview(event)">
+      </label>
 
-    <!-- फ़ाइल प्रीव्यू बॉक्स -->
-    <div class="file-dropzone" id="dropArea" onclick="openFilePicker()">
-      <div id="dropText" style="font-size: 13px; color: #475569;">
-        पेज या फोटो चुनने के लिए यहाँ टैप करें
+      <div class="file-status-box" id="statusBox">
+        <div id="statusText">Abhi tak koi file nahi chuni gayi</div>
+        <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
       </div>
-      <div id="fileNameDisplay" class="file-name-badge" style="display:none;"></div>
-    </div>
 
-    <div class="preview-box" id="previewContainer">
-      <img id="imagePreview" src="" alt="OMR शीट प्रीव्यू">
-    </div>
+      <div class="preview-wrapper" id="previewContainer">
+        <img id="imagePreview" src="" alt="OMR Preview">
+      </div>
 
-    <!-- मुख्य स्कैनिंग बटन: मास्टर जी जब यह दबाएँगे तभी विश्लेषण होगा -->
-    <button type="button" class="btn btn-scan-action" id="btnStartScan" onclick="executeScan()" disabled>
-      🔍 शीट स्कैन करें
-    </button>
+      <button type="button" class="btn-scan-main" id="btnStartScan" onclick="executeScan()" disabled>
+        🔍 Sheet Scan Karein
+      </button>
+    </div>
   </div>
 
-  <!-- लोडर -->
-  <div class="loader" id="loader">शीट का विश्लेषण हो रहा है... कृपया रुकें</div>
+  <div class="loader" id="loader">Sheet ka vishleshan ho raha hai... Kripya intezar karein</div>
 
-  <!-- 3. परीक्षा परिणाम और एक्सेल डाउनलोड -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
-      <h3>कुल प्राप्तांक (Score)</h3>
+      <h3>Kul Praptank (Total Marks)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
       <div class="breakdown">
-        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">सही</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">गलत</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">अमान्य</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">छोड़ा</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">Sahi (+1)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">Galat (0)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">Amanya</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">Chhoda</div></div>
       </div>
     </div>
 
     <button type="button" class="btn btn-green" onclick="downloadExcel()">
-      📥 मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
+      📥 Marksheet Excel (.xlsx) Download Karein
     </button>
 
     <div class="card" style="margin-top:16px; overflow-x:auto;">
-      <div class="card-title">प्रश्न-वार विस्तृत रिपोर्ट</div>
+      <div class="card-title">Prashn-war Report</div>
       <div id="tableContainer"></div>
     </div>
   </div>
 </div>
 
-<!-- कैश बायपास के लिए वर्शन पैरामीटर -->
-<script src="app.js?v=2.0"></script>
+<script src="app.js?v=999"></script>
 </body>
 </html>
