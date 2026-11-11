@@ -1,9 +1,10 @@
 import os
 import json
+import time
 from google import genai
 from google.genai import types
 
-# Render Environment Variable से Key स्वतः लोड होगी
+# एनवायरनमेंट वेरिएबल से API Key स्वतः लोड होगी
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20):
@@ -22,7 +23,7 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
     - If no bubble is filled for a question, output "-".
     - If multiple bubbles are filled for the same question, output "INVALID".
 
-    Return ONLY a valid JSON object without markdown or backticks. Format exactly as:
+    Return ONLY a valid JSON object without markdown, formatting or backticks. Format exactly as:
     {{
       "student_name": "PRINCE KUMAR",
       "roll_no": "2608493105",
@@ -30,24 +31,46 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
     }}
     """
 
-    try:
-        response = client.models.generate_content(
-            model='gemini-3.5-flash-lite',
-            contents=[
-                types.Part.from_bytes(
-                    data=image_bytes,
-                    mime_type="image/jpeg",
-                ),
-                prompt
-            ],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"
+    response = None
+    last_exception = None
+
+    # 503 UNAVAILABLE व ट्रैफिक स्पाइक्स से बचाव हेतु 3 बार ऑटो-रीट्राई
+    for attempt in range(1, 4):
+        try:
+            response = client.models.generate_content(
+                model='gemini-3.5-flash-lite',
+                contents=[
+                    types.Part.from_bytes(
+                        data=image_bytes,
+                        mime_type="image/jpeg",
+                    ),
+                    prompt
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
             )
-        )
-        
-        extracted_data = json.loads(response.text.strip())
+            if response and response.text:
+                break
+        except Exception as e:
+            last_exception = e
+            # प्रत्येक प्रयास के बाद थोड़ा रुककर पुनः प्रयास (1.5s, 3.0s)
+            time.sleep(attempt * 1.5)
+
+    if not response or not response.text:
+        err_msg = str(last_exception) if last_exception else "कोई रिस्पॉन्स प्राप्त नहीं हुआ"
+        raise ValueError(f"AI विज़न स्कैनिंग में लोड अधिक है। पुनः प्रयास विफल: {err_msg}")
+
+    # JSON पार्सिंग और संभावित मार्कडाउन क्लीनअप
+    try:
+        raw_text = response.text.strip()
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("\n", 1)[1]
+            if raw_text.endswith("```"):
+                raw_text = raw_text.rsplit("\n", 1)[0]
+        extracted_data = json.loads(raw_text.strip())
     except Exception as e:
-        raise ValueError(f"AI विज़न स्कैनिंग में त्रुटि: {str(e)}")
+        raise ValueError(f"AI रिस्पॉन्स JSON पार्स करने में त्रुटि: {str(e)}")
 
     student_name = extracted_data.get("student_name", "STUDENT").strip().upper()
     roll_no = str(extracted_data.get("roll_no", "N/A")).strip().upper()
