@@ -3,8 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nischay OMR Suite</title>
+  <title>Nischay OMR Suite - मास्टर पोर्टल</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* प्रीव्यू और फ़ाइल चयन के लिए अतिरिक्त आधुनिक शैलियाँ */
+    .file-dropzone {
+      border: 2px dashed #94a3b8;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      background: #f8fafc;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .file-dropzone:active {
+      background: #f1f5f9;
+      border-color: #2563eb;
+    }
+    .file-name-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      background: #e2e8f0;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 20px;
+      word-break: break-all;
+    }
+    .preview-box {
+      display: none;
+      margin: 12px 0;
+      text-align: center;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      max-height: 240px;
+    }
+    .preview-box img {
+      max-width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .btn-row .btn {
+      margin-top: 0;
+    }
+    .btn-scan-action {
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      padding: 14px;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+    .btn-scan-action:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
 
@@ -14,6 +78,7 @@
     <p>विद्यालय एवं कोचिंग परीक्षा मूल्यांकन पोर्टल</p>
   </header>
 
+  <!-- प्रश्न संख्या चयन टैब्स -->
   <div class="tabs">
     <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
     <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
@@ -21,27 +86,54 @@
     <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
   </div>
 
+  <!-- 1. मास्टर आंसर की -->
   <div class="card">
     <div class="card-title">
       <span>1. मास्टर आंसर की (गोला टैप करें)</span>
-      <span style="font-size:11px; color:#64748b;">टैप करके बदलें</span>
+      <span style="font-size:11px; color:#64748b;">टैप करके उत्तर बदलें</span>
     </div>
     <div class="bubble-matrix" id="matrixContainer"></div>
   </div>
 
+  <!-- 2. OMR कॉपी अपलोड एवं प्रीव्यू -->
   <div class="card">
-    <div class="card-title">2. विद्यार्थी की OMR कॉपी अपलोड करें</div>
-    <input type="file" id="fileUpload" accept="image/*" style="display:none;" onchange="onFileSelected()">
-    <button class="btn btn-primary" onclick="document.getElementById('fileUpload').click()">
-      📁 गैलरी / फ़ाइल से चुनें
-    </button>
-    <button class="btn btn-dark" onclick="triggerCamera()">
-      📷 सीधे कैमरे से स्कैन करें
+    <div class="card-title">2. विद्यार्थी की OMR कॉपी चुनें</div>
+
+    <!-- फ़ाइल चयन (बिना स्वतः स्कैन के) -->
+    <input type="file" id="fileUpload" accept="*/*" style="display:none;" onchange="handleFilePreview(event)">
+    <input type="file" id="cameraUpload" accept="image/*" capture="environment" style="display:none;" onchange="handleFilePreview(event)">
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" onclick="openFilePicker()">
+        📁 डिवाइस फ़ाइलें चुनें
+      </button>
+      <button type="button" class="btn btn-dark" onclick="openCameraPicker()">
+        📷 कैमरा खोलें
+      </button>
+    </div>
+
+    <!-- फ़ाइल प्रीव्यू बॉक्स -->
+    <div class="file-dropzone" id="dropArea" onclick="openFilePicker()">
+      <div id="dropText" style="font-size: 13px; color: #475569;">
+        पेज या फोटो चुनने के लिए यहाँ टैप करें
+      </div>
+      <div id="fileNameDisplay" class="file-name-badge" style="display:none;"></div>
+    </div>
+
+    <div class="preview-box" id="previewContainer">
+      <img id="imagePreview" src="" alt="OMR शीट प्रीव्यू">
+    </div>
+
+    <!-- मुख्य स्कैनिंग बटन: मास्टर जी जब यह दबाएँगे तभी विश्लेषण होगा -->
+    <button type="button" class="btn btn-scan-action" id="btnStartScan" onclick="executeScan()" disabled>
+      🔍 शीट स्कैन करें
     </button>
   </div>
 
+  <!-- लोडर -->
   <div class="loader" id="loader">शीट का विश्लेषण हो रहा है... कृपया रुकें</div>
 
+  <!-- 3. परीक्षा परिणाम और एक्सेल डाउनलोड -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
       <h3>कुल प्राप्तांक (Score)</h3>
@@ -54,7 +146,7 @@
       </div>
     </div>
 
-    <button class="btn btn-green" onclick="downloadExcel()">
+    <button type="button" class="btn btn-green" onclick="downloadExcel()">
       📥 मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
     </button>
 
@@ -65,6 +157,7 @@
   </div>
 </div>
 
-<script src="app.js"></script>
+<!-- कैश बायपास के लिए वर्शन पैरामीटर -->
+<script src="app.js?v=2.0"></script>
 </body>
 </html>
