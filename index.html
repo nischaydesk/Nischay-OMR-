@@ -26,6 +26,7 @@
       --warning: #d97706;
       --nav-bg: #ffffff;
       --section-alt: #f1f5f9;
+      --overlay-bg: rgba(15, 23, 42, 0.6);
     }
 
     body.dark-mode {
@@ -39,6 +40,7 @@
       --accent: #3b82f6;
       --nav-bg: #0f172a;
       --section-alt: #131b2e;
+      --overlay-bg: rgba(0, 0, 0, 0.75);
     }
 
     * {
@@ -95,23 +97,155 @@
       background: #1e3a8a;
       color: #93c5fd;
     }
-    .nav-right-tools {
+
+    /* Real 3-Line Hamburger Button */
+    .hamburger-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .hamburger-btn span {
+      display: block;
+      width: 22px;
+      height: 2.5px;
+      background: var(--text-main);
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .hamburger-btn.active span:nth-child(1) {
+      transform: translateY(7.5px) rotate(45deg);
+    }
+    .hamburger-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-btn.active span:nth-child(3) {
+      transform: translateY(-7.5px) rotate(-45deg);
+    }
+
+    /* Backdrop Overlay */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay-bg);
+      z-index: 1050;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      backdrop-filter: blur(2px);
+    }
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Sidebar Drawer */
+    .nav-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 285px;
+      height: 100%;
+      background: var(--card-bg);
+      border-right: 1px solid var(--card-border);
+      z-index: 1100;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+    }
+    .nav-drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--card-border);
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
     }
-    .nav-ctrl-btn {
-      padding: 6px 12px;
+    .drawer-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .drawer-close {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+      padding: 4px;
+    }
+    .drawer-body {
+      padding: 14px 12px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .drawer-section-lbl {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      padding: 8px 10px 4px;
+      margin-top: 6px;
+    }
+    .drawer-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .drawer-link:hover, .drawer-link:active {
+      background: var(--section-alt);
+      color: var(--accent);
+    }
+    .drawer-link .icon {
+      font-size: 16px;
+      width: 22px;
+      text-align: center;
+    }
+    .drawer-footer {
+      padding: 14px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .drawer-btn {
+      width: 100%;
+      padding: 9px 12px;
       border-radius: 8px;
       border: 1px solid var(--card-border);
-      background: var(--card-bg);
+      background: var(--section-alt);
       color: var(--text-main);
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      gap: 6px;
     }
 
     /* Submenu Navigation Links */
@@ -120,10 +254,14 @@
       border-bottom: 1px solid var(--card-border);
       overflow-x: auto;
       white-space: nowrap;
-      padding: 6px 16px;
+      padding: 8px 16px;
       display: flex;
       gap: 14px;
       justify-content: center;
+      scrollbar-width: none;
+    }
+    .sub-nav-bar::-webkit-scrollbar {
+      display: none;
     }
     .sub-nav-bar a {
       text-decoration: none;
@@ -131,9 +269,11 @@
       font-weight: 700;
       color: var(--text-muted);
       padding: 4px 6px;
+      border-radius: 6px;
     }
     .sub-nav-bar a:hover {
       color: var(--accent);
+      background: var(--section-alt);
     }
 
     /* Hero Showcase */
@@ -700,12 +840,20 @@
 </head>
 <body>
 
-<!-- 1. Header & Navigation -->
+<!-- 1. Header & Navigation with Real 3-Line Hamburger -->
 <nav class="top-navbar">
   <div class="nav-container">
-    <a href="#" class="brand-logo">
-      ⚡ Nischay OMR <span class="brand-badge" data-i18n="brand_sub">PRO v2.4 AI</span>
-    </a>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="hamburger-btn" id="menuToggleBtn" onclick="toggleDrawer()" aria-label="Open Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <a href="index.html" class="brand-logo">
+        ⚡ Nischay OMR <span class="brand-badge" data-i18n="brand_sub">PRO v2.4 AI</span>
+      </a>
+    </div>
+
     <div class="nav-right-tools">
       <button class="nav-ctrl-btn" id="langToggleBtn" onclick="toggleLanguage()">🌐 English</button>
       <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Dark</button>
@@ -713,14 +861,57 @@
   </div>
 </nav>
 
+<!-- Mobile Slide-In Navigation Drawer -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeDrawer()"></div>
+
+<aside class="nav-drawer" id="navDrawer">
+  <div class="drawer-header">
+    <div class="drawer-title">⚡ Nischay OMR Pro</div>
+    <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+  </div>
+
+  <div class="drawer-body">
+    <div class="drawer-section-lbl">मुख्य नेविगेशन</div>
+    <a href="#consoleSection" class="drawer-link" onclick="closeDrawer()">
+      <span class="icon">🔍</span> <span>स्कैनर कंसोल</span>
+    </a>
+    <a href="how_its_workes.html" class="drawer-link">
+      <span class="icon">⚙️</span> <span>हाउ इट वर्क्स (OMR Flow)</span>
+    </a>
+    <a href="#comparisonSection" class="drawer-link" onclick="closeDrawer()">
+      <span class="icon">📊</span> <span>AI vs पारंपरिक OMR</span>
+    </a>
+
+    <div class="drawer-section-lbl">सहायता एवं कानूनी नीति</div>
+    <a href="faq.html" class="drawer-link">
+      <span class="icon">❓</span> <span>अक्सर पूछे जाने वाले सवाल (FAQ)</span>
+    </a>
+    <a href="privacy.html" class="drawer-link">
+      <span class="icon">🛡️</span> <span>डेटा सुरक्षा (Privacy Policy)</span>
+    </a>
+    <a href="terms.html" class="drawer-link">
+      <span class="icon">📜</span> <span>नियम एवं शर्तें (Terms)</span>
+    </a>
+  </div>
+
+  <div class="drawer-footer">
+    <button class="drawer-btn" onclick="toggleLanguage(); closeDrawer();">
+      🌐 भाषा बदलें (Hindi / Eng)
+    </button>
+    <button class="drawer-btn" onclick="toggleTheme(); closeDrawer();">
+      🌓 डार्क / लाइट मोड स्विच
+    </button>
+  </div>
+</aside>
+
 <!-- Sub Navigation Anchor Links -->
 <div class="sub-nav-bar">
   <a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a>
-  <a href="#howItWorksSection" data-i18n="nav_how">कैसे काम करता है</a>
+  <a href="how_its_workes.html">हाउ इट वर्क्स ↗</a>
   <a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a>
-  <a href="#faqSection" data-i18n="nav_faq">FAQ</a>
-  <a href="#privacySection" data-i18n="nav_privacy">डेटा सुरक्षा</a>
-  <a href="#termsSection" data-i18n="nav_terms">नियम व शर्तें</a>
+  <a href="faq.html">FAQ ↗</a>
+  <a href="privacy.html">डेटा सुरक्षा ↗</a>
+  <a href="terms.html">नियम व शर्तें ↗</a>
 </div>
 
 <!-- 2. Hero Showcase Banner -->
@@ -893,6 +1084,12 @@
       <div class="flow-visual-box">📄 Excel + Student Scorecard PDF</div>
     </div>
   </div>
+
+  <div style="text-align: center; margin-top: 20px;">
+    <a href="how_its_workes.html" style="color:var(--accent); font-weight:800; font-size:13px; text-decoration:none;">
+      विस्तृत गाइड और फ्लो डायग्राम देखें ➔
+    </a>
+  </div>
 </section>
 
 <!-- 5. Technology Comparison (OpenCV vs AI Vision) -->
@@ -990,6 +1187,12 @@
       </div>
     </div>
   </div>
+
+  <div style="text-align: center; margin-top: 18px;">
+    <a href="faq.html" style="color:var(--accent); font-weight:800; font-size:13px; text-decoration:none;">
+      सभी विस्तृत FAQ देखें ➔
+    </a>
+  </div>
 </section>
 
 <!-- 7. Data Privacy & Terms -->
@@ -1005,6 +1208,12 @@
     <br>
     <h3>2. एंड-टू-एंड एनक्रिप्शन (End-to-End SSL)</h3>
     <p>आपके डिवाइस से सर्वर तक जाने वाला सारा डेटा 256-बिट HTTPS एन्क्रिप्टेड टनल से होकर गुजरता है। कोई भी तीसरा पक्ष आपके प्रश्न-पत्र या छात्रों की कॉपियों को नहीं देख सकता।</p>
+    
+    <div style="margin-top: 14px;">
+      <a href="privacy.html" style="color:var(--accent); font-weight:800; text-decoration:none;">
+        पूरी डेटा सुरक्षा नीति पढ़ें ➔
+      </a>
+    </div>
   </div>
 </section>
 
@@ -1018,6 +1227,12 @@
     <p>1. यह प्लेटफ़ॉर्म शिक्षकों, कोचिंग संस्थानों, स्कूलों और छात्रों की परीक्षा प्रक्रिया को तेज़ और पारदर्शी बनाने हेतु एक शैक्षणिक व व्यावसायिक SaaS टूल है।</p>
     <p>2. उपयोगकर्ता द्वारा अपलोड की गई सामग्री कॉपीराइट नियमों के अनुकूल होनी चाहिए। संस्था अपनी मास्टर आंसर की की शुद्धता के लिए स्वयं जिम्मेदार होगी।</p>
     <p>3. AI विज़न इंजन 99.9% शुद्धता से कॉपियाँ जाँचता है, तथापि किसी विवाद की स्थिति में शिक्षक द्वारा अंतिम भौतिक सत्यापन मान्य होगा।</p>
+
+    <div style="margin-top: 14px;">
+      <a href="terms.html" style="color:var(--accent); font-weight:800; text-decoration:none;">
+        पूर्ण नियम व शर्तें पढ़ें ➔
+      </a>
+    </div>
   </div>
 </section>
 
@@ -1035,17 +1250,17 @@
       <h5>त्वरित लिंक्स</h5>
       <ul>
         <li><a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a></li>
-        <li><a href="#howItWorksSection" data-i18n="nav_how">कैसे काम करता है</a></li>
+        <li><a href="how_its_workes.html">हाउ इट वर्क्स (Flow)</a></li>
         <li><a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a></li>
-        <li><a href="#faqSection" data-i18n="nav_faq">FAQ</a></li>
+        <li><a href="faq.html">FAQ प्रश्नोत्तरी</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
       <h5>गोपनीयता व कानून</h5>
       <ul>
-        <li><a href="#privacySection" data-i18n="nav_privacy">डेटा सुरक्षा नीति</a></li>
-        <li><a href="#termsSection" data-i18n="nav_terms">उपयोग की शर्तें</a></li>
+        <li><a href="privacy.html">डेटा सुरक्षा नीति</a></li>
+        <li><a href="terms.html">उपयोग की शर्तें</a></li>
         <li><a href="mailto:support@nischaydesk.com">सहायता एवं संपर्क</a></li>
       </ul>
     </div>
@@ -1063,9 +1278,37 @@
 <script src="translations.js"></script>
 <script src="theme_engine.js"></script>
 <script src="pdf_engine.js"></script>
-<script src="app.js?v=5001"></script>
+<script src="app.js?v=6001"></script>
 
 <script>
+  // Real 3-Line Hamburger Drawer Functions
+  function toggleDrawer() {
+    const drawer = document.getElementById("navDrawer");
+    const overlay = document.getElementById("menuOverlay");
+    const btn = document.getElementById("menuToggleBtn");
+
+    const isOpen = drawer.classList.contains("open");
+    if (isOpen) {
+      closeDrawer();
+    } else {
+      drawer.classList.add("open");
+      overlay.classList.add("open");
+      btn.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  function closeDrawer() {
+    const drawer = document.getElementById("navDrawer");
+    const overlay = document.getElementById("menuOverlay");
+    const btn = document.getElementById("menuToggleBtn");
+
+    if (drawer) drawer.classList.remove("open");
+    if (overlay) overlay.classList.remove("open");
+    if (btn) btn.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
   // Dynamic Slider Controller for 5 to 100 Questions
   function onSliderChange(val) {
     document.getElementById("rangeValDisplay").innerText = val;
