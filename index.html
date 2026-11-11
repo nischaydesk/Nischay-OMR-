@@ -8,6 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- PDF.js for Real-Time PDF First-Page Preview -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -359,10 +362,21 @@
       align-items: center;
       margin-bottom: 12px;
     }
-    .sub-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: normal;
+    .btn-clear-action {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-clear-action:active {
+      transform: scale(0.95);
     }
 
     /* Tabs & Slider */
@@ -515,6 +529,7 @@
       font-size: 12px;
       color: var(--text-muted);
       margin-bottom: 8px;
+      position: relative;
     }
     .file-badge {
       display: inline-block;
@@ -528,21 +543,21 @@
       word-break: break-all;
     }
 
-    /* REAL-TIME SCANNING VISUAL ENGINE WITH LASER BEAM */
+    /* REAL-TIME SCANNING VISUAL ENGINE WITH LASER BEAM & PDF CANVAS */
     .preview-box {
       display: none;
       margin-bottom: 12px;
       background: #000;
       border-radius: 12px;
       overflow: hidden;
-      max-height: 260px;
+      max-height: 280px;
       text-align: center;
       position: relative;
       border: 1.5px solid #1e293b;
     }
-    .preview-box img {
+    .preview-box img, .preview-box canvas {
       max-width: 100%;
-      max-height: 260px;
+      max-height: 280px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
@@ -575,7 +590,7 @@
     }
     .scanning-active .scan-laser-line {
       display: block;
-      animation: laserSweep 1.8s ease-in-out infinite;
+      animation: laserSweep 1.6s ease-in-out infinite;
     }
     .scanning-active .scan-overlay-grid {
       display: block;
@@ -647,7 +662,7 @@
       margin-top: 8px;
     }
     .score-banner {
-      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      background: linear-gradient(135deg, #1e40af, #2563eb);
       color: white;
       border-radius: 14px;
       padding: 20px 14px;
@@ -824,14 +839,13 @@
   <div class="app-card">
     <div class="card-head">
       <span data-i18n="q_limit_title">प्रश्नों की संख्या चुनें (Questions Limit)</span>
-      <span class="sub-hint" data-i18n="q_limit_sub">5 से 100 प्रश्न समर्थित</span>
     </div>
 
     <div class="tabs-group">
-      <div class="tab-item active" onclick="setQuestionsQuick(20)" data-i18n="tab_20">20 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(50)" data-i18n="tab_50">50 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(80)" data-i18n="tab_80">80 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(100)" data-i18n="tab_100">100 सवाल</div>
+      <div class="tab-item active" data-q="20" onclick="setQuestionsQuick(20)" data-i18n="tab_20">20 सवाल</div>
+      <div class="tab-item" data-q="50" onclick="setQuestionsQuick(50)" data-i18n="tab_50">50 सवाल</div>
+      <div class="tab-item" data-q="80" onclick="setQuestionsQuick(80)" data-i18n="tab_80">80 सवाल</div>
+      <div class="tab-item" data-q="100" onclick="setQuestionsQuick(100)" data-i18n="tab_100">100 सवाल</div>
     </div>
 
     <div class="slider-box">
@@ -843,29 +857,34 @@
     </div>
   </div>
 
-  <!-- Master Key Card -->
+  <!-- Master Key Card with Clear All Button -->
   <div class="app-card">
     <div class="card-head">
       <span data-i18n="card1_title">1. मास्टर उत्तर कुंजी (Answer Key)</span>
-      <span class="sub-hint" data-i18n="card1_sub">गोला छूकर सही उत्तर सेट करें</span>
+      <button type="button" class="btn-clear-action" onclick="clearAllAnswerKey()">
+        🧹 <span>Clear Key</span>
+      </button>
     </div>
     <div id="matrixContainer"></div>
   </div>
 
-  <!-- Upload and Scan Card -->
+  <!-- Upload and Scan Card with Clear File Feature -->
   <div class="app-card">
     <div class="card-head">
       <span data-i18n="card2_title">2. छात्र की OMR शीट अपलोड करें</span>
+      <button type="button" class="btn-clear-action" id="btnClearFile" onclick="clearSelectedFile()" style="display:none;">
+        ❌ <span>Clear File</span>
+      </button>
     </div>
 
     <label class="btn-action btn-upload">
       <span data-i18n="btn_upload_file">📁 डिवाइस फ़ाइलें / Documents चुनें</span>
-      <input type="file" id="fileUpload" class="hidden-input" onchange="handleFilePreview(event)">
+      <input type="file" id="fileUpload" class="hidden-input" accept="image/*,application/pdf" onchange="handleFilePreviewCustom(event)">
     </label>
 
     <label class="btn-action btn-camera">
       <span data-i18n="btn_camera">📷 सीधे कैमरे से फ़ोटो खींचें</span>
-      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreview(event)">
+      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreviewCustom(event)">
     </label>
 
     <div class="file-status-box" id="statusBox">
@@ -873,11 +892,12 @@
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
-    <!-- Live Preview Box with Real-Time Scanning Visuals -->
+    <!-- Live Preview Box Supporting Image & Multi-Page PDF Canvas -->
     <div class="preview-box" id="previewContainer">
       <div class="scan-laser-line"></div>
       <div class="scan-overlay-grid"></div>
-      <img id="imagePreview" src="" alt="OMR Preview">
+      <img id="imagePreview" src="" alt="OMR Preview" style="display:none;">
+      <canvas id="pdfPreviewCanvas" style="display:none;"></canvas>
     </div>
 
     <button type="button" class="btn-scan-trigger" id="btnStartScan" onclick="executeScanWithDynamicProgress()" disabled>
@@ -938,7 +958,7 @@
 <script src="translations.js"></script>
 <script src="pdf_engine.js"></script>
 <script src="batch_manager.js"></script>
-<script src="app.js?v=9001"></script>
+<script src="app.js?v=9002"></script>
 
 <script>
   // Drawer Toggler
@@ -979,16 +999,144 @@
     localStorage.setItem("nischay_theme_pref", isLight ? "light" : "dark");
   }
 
-  // Question Limit Slider
+  // 100% FIXED QUESTION LIMIT SELECTION (Prevents 10 matching 100 bug)
   function onSliderChange(val) {
-    document.getElementById("rangeValDisplay").innerText = val;
-    setQuestions(parseInt(val));
+    const num = parseInt(val);
+    document.getElementById("rangeValDisplay").innerText = num;
+    highlightMatchingTab(num);
+    setQuestions(num);
   }
 
   function setQuestionsQuick(num) {
     document.getElementById("customQuestionRange").value = num;
     document.getElementById("rangeValDisplay").innerText = num;
+    highlightMatchingTab(num);
     setQuestions(num);
+  }
+
+  function highlightMatchingTab(num) {
+    document.querySelectorAll('.tab-item').forEach(btn => {
+      btn.classList.remove('active');
+      const tabNum = parseInt(btn.getAttribute("data-q"));
+      if (tabNum === num) {
+        btn.classList.add('active');
+      }
+    });
+  }
+
+  // CLEAR ALL ANSWER KEY
+  function clearAllAnswerKey() {
+    answerKey = {};
+    renderMatrix();
+    if (typeof showToast === "function") {
+      showToast("मास्टर कुंजी के सभी उत्तर साफ़ कर दिए गए!", "info");
+    }
+  }
+
+  // CLEAR SELECTED FILE & RESET PREVIEW CACHE
+  function clearSelectedFile() {
+    selectedOmrFile = null;
+    const fileInp = document.getElementById("fileUpload");
+    const camInp = document.getElementById("cameraUpload");
+    if (fileInp) fileInp.value = "";
+    if (camInp) camInp.value = "";
+
+    const statusText = document.getElementById("statusText");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const previewBox = document.getElementById("previewContainer");
+    const previewImg = document.getElementById("imagePreview");
+    const pdfCanvas = document.getElementById("pdfPreviewCanvas");
+    const btnClear = document.getElementById("btnClearFile");
+    const btnScan = document.getElementById("btnStartScan");
+
+    if (statusText) statusText.innerText = "अभी तक कोई फ़ाइल नहीं चुनी गई";
+    if (fileNameDisplay) {
+      fileNameDisplay.style.display = "none";
+      fileNameDisplay.innerText = "";
+    }
+    if (previewImg) {
+      previewImg.src = "";
+      previewImg.style.display = "none";
+    }
+    if (pdfCanvas) {
+      pdfCanvas.style.display = "none";
+    }
+    if (previewBox) {
+      previewBox.style.display = "none";
+      previewBox.classList.remove("scanning-active");
+    }
+    if (btnClear) btnClear.style.display = "none";
+    if (btnScan) btnScan.disabled = true;
+  }
+
+  // REAL-TIME FILE PREVIEW (Fixes Old Image Cache & Enables PDF Rendering)
+  async function handleFilePreviewCustom(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // पुराना प्रीव्यू तुरंत साफ़ करना
+    clearSelectedFile();
+
+    selectedOmrFile = file;
+
+    const statusText = document.getElementById("statusText");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const previewBox = document.getElementById("previewContainer");
+    const previewImg = document.getElementById("imagePreview");
+    const pdfCanvas = document.getElementById("pdfPreviewCanvas");
+    const btnClear = document.getElementById("btnClearFile");
+    const btnScan = document.getElementById("btnStartScan");
+
+    if (statusText) statusText.innerText = "चयनित OMR फ़ाइल:";
+    if (fileNameDisplay) {
+      fileNameDisplay.innerText = file.name;
+      fileNameDisplay.style.display = "inline-block";
+    }
+    if (btnClear) btnClear.style.display = "inline-flex";
+
+    // 1. अगर PDF फ़ाइल है (PDF.js से पहला पेज रेंडर करना)
+    if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+      try {
+        if (typeof pdfjsLib !== "undefined") {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const page = await pdf.getPage(1); // पहला पेज प्रीव्यू
+          
+          const viewport = page.getViewport({ scale: 1.5 });
+          pdfCanvas.width = viewport.width;
+          pdfCanvas.height = viewport.height;
+          
+          const ctx = pdfCanvas.getContext("2d");
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          if (previewImg) previewImg.style.display = "none";
+          pdfCanvas.style.display = "block";
+          if (previewBox) previewBox.style.display = "block";
+
+          if (statusText) {
+            statusText.innerText = `PDF दस्तावेज़ (${pdf.numPages} पेज) चयनित:`;
+          }
+        }
+      } catch (err) {
+        if (statusText) statusText.innerText = "PDF लोड हुई (प्रीव्यू उपलब्ध नहीं):";
+      }
+    } 
+    // 2. अगर इमेज फ़ाइल है
+    else if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        if (pdfCanvas) pdfCanvas.style.display = "none";
+        if (previewImg) {
+          previewImg.src = evt.target.result;
+          previewImg.style.display = "block";
+        }
+        if (previewBox) previewBox.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    if (btnScan) btnScan.disabled = false;
   }
 
   // REAL ADAPTIVE PROGRESS & LIVE SCANNER CONTROLLER
@@ -1010,7 +1158,7 @@
     const previewBox = document.getElementById("previewContainer");
     if (previewBox) previewBox.classList.add("scanning-active");
 
-    let currentP = 4;
+    let currentP = 5;
     const isEn = (localStorage.getItem("nischay_omr_lang") === "en");
     
     setProgressVal(currentP, isEn ? "Starting..." : "प्रोसेसिंग आरंभ...", isEn ? "Encoding image data..." : "इमेज डेटा तैयार किया जा रहा है...");
@@ -1020,20 +1168,31 @@
     // सर्वर से सिंक रहने वाला स्मूथ लिनियर टिकर
     const progressInterval = setInterval(() => {
       if (!isApiCompleted) {
-        if (currentP < 35) {
+        if (currentP < 40) {
           currentP += 2.2;
           setProgressVal(currentP, isEn ? "Analyzing Sheet..." : "शीट विश्लेषण...", isEn ? "Live Vision Deskew & Alignment..." : "लाइव विज़न डेस्क्यू और अलाइनमेंट...");
-        } else if (currentP < 70) {
-          currentP += 1.4;
+        } else if (currentP < 75) {
+          currentP += 1.2;
           setProgressVal(currentP, isEn ? "AI Vision Active..." : "AI विज़न सक्रिय...", isEn ? "Reading student credentials & bubbles..." : "छात्र का नाम, रोल नंबर और बबल्स डिकोड जारी...");
         } else if (currentP < 96) {
-          currentP += 0.6;
+          currentP += 0.4;
           setProgressVal(currentP, isEn ? "Matching Master Key..." : "मास्टर कुंजी मिलान...", isEn ? "Finalizing official scorecard..." : "स्कोरकार्ड और रिज़ल्ट तैयार किया जा रहा है...");
         }
       }
     }, 110);
 
     try {
+      // अगर मल्टी-पेज PDF है, तो बैच मैनेजर से प्रोसेस होगा
+      if (selectedOmrFile && (selectedOmrFile.type === "application/pdf" || selectedOmrFile.name.toLowerCase().endsWith(".pdf")) && typeof runBatchEvaluation === "function") {
+        const isPdfBatch = await prepareBatchQueue(selectedOmrFile);
+        if (isPdfBatch) {
+          clearInterval(progressInterval);
+          await runBatchEvaluation();
+          if (previewBox) previewBox.classList.remove("scanning-active");
+          return;
+        }
+      }
+
       await executeScan();
       isApiCompleted = true;
       clearInterval(progressInterval);
