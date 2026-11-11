@@ -6,7 +6,7 @@
   <title>Nischay OMR Pro - AI Powered Scanner</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Noto+Sans+Devanagari:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -17,24 +17,22 @@
     }
 
     body {
-      background: #f8fafc;
+      background: #f1f5f9;
       color: #0f172a;
-      padding-bottom: 40px;
-      overflow-x: hidden;
-      width: 100%;
+      padding-bottom: 30px;
     }
 
-    /* Top Bar */
+    /* Header */
     .top-header {
       background: #1e3a8a;
       color: #ffffff;
       padding: 16px 14px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .top-badge {
       display: inline-block;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.18);
       padding: 3px 10px;
       border-radius: 20px;
       font-size: 11px;
@@ -45,7 +43,6 @@
     .top-header h1 {
       font-size: 20px;
       font-weight: 800;
-      line-height: 1.3;
     }
     .top-header p {
       font-size: 12px;
@@ -53,16 +50,16 @@
       margin-top: 4px;
     }
 
-    /* Main Container */
+    /* Container */
     .container {
       width: 100%;
-      max-width: 520px;
+      max-width: 480px;
       margin: 0 auto;
       padding: 12px;
     }
 
-    /* Question Select Tabs */
-    .tabs-bar {
+    /* Question Tabs */
+    .tabs {
       display: flex;
       background: #ffffff;
       padding: 4px;
@@ -71,10 +68,10 @@
       margin-bottom: 12px;
       border: 1px solid #e2e8f0;
     }
-    .tab-item {
+    .tab-btn {
       flex: 1;
       text-align: center;
-      padding: 8px 2px;
+      padding: 9px 2px;
       font-size: 13px;
       font-weight: 700;
       color: #64748b;
@@ -82,38 +79,38 @@
       cursor: pointer;
       user-select: none;
     }
-    .tab-item.active {
+    .tab-btn.active {
       background: #2563eb;
       color: #ffffff;
     }
 
     /* Cards */
-    .app-card {
+    .card {
       background: #ffffff;
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       margin-bottom: 12px;
       border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
-    .card-head {
-      font-size: 15px;
+    .card-title {
+      font-size: 14px;
       font-weight: 700;
       color: #0f172a;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-    .card-head .sub-hint {
+    .card-title span:last-child {
       font-size: 11px;
       color: #64748b;
       font-weight: normal;
     }
 
-    /* Bubble Matrix */
-    .matrix-box {
-      max-height: 220px;
+    /* Master Bubble Matrix Fix */
+    #matrixContainer {
+      max-height: 250px;
       overflow-y: auto;
       padding-right: 4px;
       display: flex;
@@ -121,47 +118,52 @@
       gap: 6px;
     }
     .matrix-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
       background: #f8fafc;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 8px;
-      border: 1px solid #f1f5f9;
+      border: 1px solid #e2e8f0;
     }
-    .q-lbl {
-      font-weight: 700;
-      font-size: 13px;
-      color: #334155;
-      width: 45px;
+    .q-label {
+      font-weight: 800;
+      font-size: 14px;
+      color: #1e293b;
+      width: 50px;
     }
-    .opt-grp {
-      display: flex;
-      gap: 8px;
+    .options-group {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 12px !important;
+      align-items: center !important;
     }
-    .bubble {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1.5px solid #94a3b8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 12px;
-      color: #334155;
-      background: #ffffff;
-      cursor: pointer;
-      user-select: none;
+    .opt-bubble {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 50% !important;
+      border: 2px solid #64748b !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      color: #1e293b !important;
+      background: #ffffff !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      transition: all 0.1s ease;
     }
-    .bubble.selected {
-      background: #0f172a;
-      border-color: #0f172a;
-      color: #ffffff;
+    .opt-bubble.selected {
+      background: #0f172a !important;
+      border-color: #0f172a !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35) !important;
     }
 
-    /* Buttons */
-    .btn-action {
+    /* Upload Buttons */
+    .custom-file-btn {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -178,9 +180,9 @@
       margin-bottom: 8px;
       user-select: none;
     }
-    .btn-upload { background: #1e40af; }
-    .btn-camera { background: #0f172a; }
-    .hidden-input { display: none !important; }
+    .btn-file { background: #1e40af; }
+    .btn-camera-custom { background: #0f172a; }
+    .native-hidden-input { display: none !important; }
 
     .file-status-box {
       border: 1.5px dashed #cbd5e1;
@@ -204,7 +206,7 @@
       word-break: break-all;
     }
 
-    .preview-box {
+    .preview-wrapper {
       display: none;
       margin-bottom: 8px;
       background: #000;
@@ -213,7 +215,7 @@
       max-height: 220px;
       text-align: center;
     }
-    .preview-box img {
+    .preview-wrapper img {
       max-width: 100%;
       max-height: 220px;
       object-fit: contain;
@@ -221,7 +223,7 @@
       margin: 0 auto;
     }
 
-    .btn-scan {
+    .btn-scan-main {
       width: 100%;
       padding: 15px;
       background: #2563eb;
@@ -233,7 +235,7 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
-    .btn-scan:disabled {
+    .btn-scan-main:disabled {
       background: #cbd5e1;
       color: #94a3b8;
       cursor: not-allowed;
@@ -244,12 +246,12 @@
     .progress-box {
       display: none;
       margin-top: 10px;
-      padding: 14px;
+      padding: 12px;
       border-radius: 10px;
       background: #f1f5f9;
       border: 1px solid #e2e8f0;
     }
-    .progress-head {
+    .progress-header {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
@@ -257,20 +259,20 @@
       color: #0f172a;
       margin-bottom: 6px;
     }
-    .progress-bar-track {
+    .progress-track {
       width: 100%;
       height: 9px;
       background: #e2e8f0;
       border-radius: 6px;
       overflow: hidden;
     }
-    .progress-bar-fill {
+    .progress-fill {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #2563eb, #16a34a);
       transition: width 0.15s ease-out;
     }
-    .progress-desc {
+    .progress-subtext {
       margin-top: 6px;
       font-size: 11px;
       color: #64748b;
@@ -306,22 +308,22 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
     }
-    .breakdown-item {
+    .breakdown-box {
       background: rgba(255, 255, 255, 0.15);
       padding: 8px 2px;
       border-radius: 6px;
     }
-    .breakdown-item .val {
+    .breakdown-box .b-val {
       font-size: 16px;
       font-weight: 800;
     }
-    .breakdown-item .lbl {
+    .breakdown-box .b-lbl {
       font-size: 10px;
       opacity: 0.85;
       margin-top: 2px;
     }
 
-    .btn-download-excel {
+    .btn-green {
       width: 100%;
       padding: 14px;
       background: #16a34a;
@@ -354,17 +356,6 @@
     .status-skp { color: #64748b; }
     .status-inv { color: #d97706; font-weight: 700; }
 
-    /* Footer Info */
-    .info-box {
-      font-size: 12px;
-      color: #64748b;
-      line-height: 1.6;
-    }
-    .info-box h4 {
-      color: #1e3a8a;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
     footer {
       text-align: center;
       font-size: 11px;
@@ -383,35 +374,35 @@
 
 <div class="container">
 
-  <!-- Question Selection Tabs -->
-  <div class="tabs-bar">
-    <div class="tab-item active" onclick="setQuestions(20)">20 सवाल</div>
-    <div class="tab-item" onclick="setQuestions(50)">50 सवाल</div>
-    <div class="tab-item" onclick="setQuestions(80)">80 सवाल</div>
-    <div class="tab-item" onclick="setQuestions(100)">100 सवाल</div>
+  <!-- Question Tabs -->
+  <div class="tabs">
+    <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(80)">80 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
   </div>
 
   <!-- Master Key -->
-  <div class="app-card">
-    <div class="card-head">
+  <div class="card">
+    <div class="card-title">
       <span>1. मास्टर उत्तर कुंजी (Answer Key)</span>
-      <span class="sub-hint">गोला छूकर सेट करें</span>
+      <span>गोला छूकर सेट करें</span>
     </div>
-    <div class="matrix-box" id="matrixContainer"></div>
+    <div id="matrixContainer"></div>
   </div>
 
   <!-- Upload Section -->
-  <div class="app-card">
-    <div class="card-head">2. छात्र की OMR शीट अपलोड करें</div>
+  <div class="card">
+    <div class="card-title">2. छात्र की OMR शीट अपलोड करें</div>
 
-    <label class="btn-action btn-upload">
+    <label class="custom-file-btn btn-file">
       📁 डिवाइस फ़ाइलें / Documents चुनें
-      <input type="file" id="fileUpload" class="hidden-input" onchange="handleFilePreview(event)">
+      <input type="file" id="fileUpload" class="native-hidden-input" onchange="handleFilePreview(event)">
     </label>
 
-    <label class="btn-action btn-camera">
+    <label class="custom-file-btn btn-camera-custom">
       📷 सीधे कैमरे से फ़ोटो खींचें
-      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreview(event)">
+      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="native-hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <div class="file-status-box" id="statusBox">
@@ -419,24 +410,24 @@
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
-    <div class="preview-box" id="previewContainer">
+    <div class="preview-wrapper" id="previewContainer">
       <img id="imagePreview" src="" alt="OMR Preview">
     </div>
 
-    <button type="button" class="btn-scan" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
+    <button type="button" class="btn-scan-main" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
       🔍 शीट स्कैन शुरू करें
     </button>
 
     <!-- 0 to 100 Dynamic Real Progress Meter -->
     <div class="progress-box" id="progressWrapper">
-      <div class="progress-head">
+      <div class="progress-header">
         <span id="progressStateTitle">प्रोसेसिंग आरंभ...</span>
         <span id="progressPercentText">0%</span>
       </div>
-      <div class="progress-bar-track">
-        <div class="progress-bar-fill" id="progressBarFill"></div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBarFill"></div>
       </div>
-      <div class="progress-desc" id="progressStatusDetail">शीट को स्कैनिंग इंजन पर भेजा जा रहा है...</div>
+      <div class="progress-subtext" id="progressStatusDetail">शीट को स्कैनिंग इंजन पर भेजा जा रहा है...</div>
     </div>
   </div>
 
@@ -446,30 +437,21 @@
       <h3>कुल प्राप्तांक (Total Marks)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
       <div class="breakdown">
-        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl">सही (+1)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl">गलत (0)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl">अमान्य</div></div>
-        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl">छोड़ा</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">सही (+1)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">गलत (0)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">अमान्य</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">छोड़ा</div></div>
       </div>
     </div>
 
-    <button type="button" class="btn-download-excel" onclick="downloadExcel()">
+    <button type="button" class="btn-green" onclick="downloadExcel()">
       📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
     </button>
 
-    <div class="app-card" style="overflow-x:auto;">
-      <div class="card-head">प्रश्न-वार विस्तृत रिपोर्ट</div>
+    <div class="card" style="overflow-x:auto;">
+      <div class="card-title">प्रश्न-वार विस्तृत रिपोर्ट</div>
       <div id="tableContainer"></div>
     </div>
-  </div>
-
-  <!-- How It Works & Privacy -->
-  <div class="app-card info-box">
-    <h4>⚙️ Nischay OMR कैसे काम करता है?</h4>
-    <p>1. मास्टर आंसर की सेट करें $\rightarrow$ 2. OMR शीट की सीधी फोटो अपलोड करें $\rightarrow$ 3. AI विज़न द्वारा 1 सेकंड में 100% सटीक मिलान और एक्सेल रिपोर्ट प्राप्त करें।</p>
-    <div style="height: 10px;"></div>
-    <h4>🛡️ डेटा सुरक्षा एवं प्राइवेसी</h4>
-    <p>कोई भी OMR शीट सर्वर पर स्थायी रूप से स्टोर नहीं की जाती। केवल रैम (RAM) में त्वरित मूल्यांकन के बाद डेटा को तुरंत नष्ट कर दिया जाता है।</p>
   </div>
 
   <footer>
@@ -478,7 +460,7 @@
 
 </div>
 
-<script src="app.js?v=2001"></script>
+<script src="app.js?v=3001"></script>
 <script>
   function updateProgress(percent, title, detail) {
     const wrap = document.getElementById("progressWrapper");
@@ -502,7 +484,7 @@
   }
 
   async function executeScanWithProgress() {
-    updateProgress(10, "फाइल लोड हो रही है...", "इमेज डेटा को एन्कोड किया जा रहा है...");
+    updateProgress(10, "फाइल लोड हो रही है...", "इमेज डेटा को प्रोसेस किया जा रहा है...");
     
     let simulatedProgress = 10;
     const progressTimer = setInterval(() => {
@@ -510,7 +492,7 @@
         simulatedProgress += Math.random() * 8 + 4;
         if (simulatedProgress > 88) simulatedProgress = 88;
         
-        let msg = "शीट के कोनों और बबल्स का विश्लेषण...";
+        let msg = "शीट के बबल्स और अलाइनमेंट का विश्लेषण...";
         if (simulatedProgress > 45) msg = "AI विज़न द्वारा विकल्पों की पहचान जारी है...";
         if (simulatedProgress > 75) msg = "मास्टर आंसर की से मिलान...";
         
