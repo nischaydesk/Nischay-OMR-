@@ -1,34 +1,43 @@
 import os
 import json
-import time
+import logging
 from google import genai
 from google.genai import types
 
+# लॉगर कॉन्फ़िगरेशन
+logger = logging.getLogger("omr_engine")
+
+# Render Environment Variable से API Key स्वतः लोड होगी
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+
+# प्राइमरी और बैकअप मॉडल की सूची
+PRIMARY_MODEL = "gemini-3.8-flash"
+BACKUP_MODEL = "gemini-3.5-flash-lite"
 
 def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20):
     prompt = f"""
-    You are an ultra-strict OMR verification and evaluation system.
+    You are an ultra-strict, high-speed OMR verification and evaluation system.
 
-    STEP 1: OMR VALIDATION (MANDATORY)
-    - Check if this image is actually an OMR (Optical Mark Recognition) answer sheet containing a numbered bubble grid (A, B, C, D).
-    - If the image is a screenshot, random picture, document, code, or anything OTHER than an OMR sheet, set "is_omr": false immediately and leave other fields empty.
+    STEP 1: OMR VALIDATION
+    - Verify if this image is an actual OMR answer sheet containing bubble rows (A, B, C, D).
+    - If it is a screenshot, terminal log, landscape photo, or not an OMR sheet, set "is_omr": false and stop.
 
-    STEP 2: STRICT ROLL NUMBER DETECTION
-    - Do NOT guess or take random text from headers/logs/URLs.
-    - Look EXCLUSIVELY for labels like "ROLL NO", "ROLL NUMBER", "अनुक्रमांक", "OMR NO", or a dedicated numeric barcode box.
-    - If no such labeled box exists or it does not contain a roll number, output "N/A".
+    STEP 2: STRICT ROLL NUMBER EXTRACTION
+    - Only read from explicit boxes labeled "ROLL NO", "ROLL NUMBER", "अनुक्रमांक", or "OMR NO".
+    - Do NOT guess or pick random text from headers/logs. If absent or unclear, output "N/A".
+    - Read CANDIDATE NAME if printed/written clearly, else output "STUDENT".
 
-    STEP 3: BUBBLE SCANNING (Only if is_omr is true)
-    - Scan darkened circles for Q1 to Q{total_questions}.
-    - Ink filled = letter (A, B, C, D). Empty = "-". Multiple = "INVALID".
+    STEP 3: EVALUATE BUBBLES
+    - Detect filled/darkened bubbles for questions 1 to {total_questions}.
+    - Ink darkened option = 'A', 'B', 'C', or 'D'.
+    - Empty = "-". Multiple darkened = "INVALID".
 
-    Return ONLY pure JSON without markdown or backticks:
+    Return ONLY a pure valid JSON object without markdown formatting or backticks:
     {{
       "is_omr": true,
-      "student_name": "STUDENT",
-      "roll_no": "N/A",
-      "answers": {{"1": "A", "2": "B"}}
+      "student_name": "PRINCE KUMAR",
+      "roll_no": "2608493105",
+      "answers": {{"1": "B", "2": "A", "3": "-", "4": "INVALID"}}
     }}
     OR if NOT an OMR sheet:
     {{
@@ -38,12 +47,19 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
     """
 
     response = None
-    for attempt in range(1, 3):
+    selected_model_used = None
+    last_error = None
+
+    # प्राइमरी मॉडल से प्रयास, फ़ेल होने पर स्वतः बैकअप मॉडल पर स्विच
+    for model_name in [PRIMARY_MODEL, BACKUP_MODEL]:
         try:
             response = client.models.generate_content(
-                model='gemini-3.8-flash',
+                model=model_name,
                 contents=[
-                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
+                    types.Part.from_bytes(
+                        data=image_bytes,
+                        mime_type="image/jpeg",
+                    ),
                     prompt
                 ],
                 config=types.GenerateContentConfig(
@@ -52,37 +68,39 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
                 )
             )
             if response and response.text:
+                selected_model_used = model_name
                 break
-        except Exception:
-            time.sleep(1.0)
+        except Exception as err:
+            last_error = err
+            logger.warning(f"{model_name} विफल हुआ, अगले मॉडल पर स्विच हो रहा है... त्रुटि: {err}")
+            continue
 
     if not response or not response.text:
-        raise ValueError("सर्वर से संपर्क नहीं हो सका।")
+        raise ValueError(f"दोनों AI मॉडल से रिस्पॉन्स नहीं मिला: {str(last_error)}")
 
+    # JSON पार्सिंग और संभावित मार्कडाउन क्लीनअप
     try:
         raw_text = response.text.strip()
-        if "```" in raw_text:
-            raw_text = raw_text.split("```")[1]
-            if raw_text.startswith("json"):
-                raw_text = raw_text[4:]
-        data = json.loads(raw_text.strip())
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("\n", 1)[1]
+            if raw_text.endswith("```"):
+                raw_text = raw_text.rsplit("\n", 1)[0]
+        extracted_data = json.loads(raw_text.strip())
     except Exception as e:
-        raise ValueError("डेटा पार्स करने में त्रुटि आई।")
+        raise ValueError(f"AI JSON पार्स करने में त्रुटि: {str(e)}")
 
-    # यदि इमेज OMR नहीं है
-    if not data.get("is_omr", True):
+    # अगर OMR शीट नहीं है तो तुरंत फ़्रंटएंड को सूचित करें
+    if not extracted_data.get("is_omr", True):
         return {
             "is_omr": False,
-            "message": data.get("message", "यह OMR शीट नहीं है! कृपया सही OMR शीट अपलोड करें।")
+            "message": extracted_data.get("message", "यह OMR शीट नहीं है! कृपया सही OMR शीट अपलोड करें।")
         }
 
-    student_name = data.get("student_name", "STUDENT").strip().upper()
-    raw_roll = str(data.get("roll_no", "N/A")).strip().upper()
-
-    # सख्त रोल नंबर फ़िल्टर: अगर 3 अक्षर से कम या अमान्य सिंबल हों तो N/A
+    student_name = extracted_data.get("student_name", "STUDENT").strip().upper()
+    raw_roll = str(extracted_data.get("roll_no", "N/A")).strip().upper()
     roll_no = raw_roll if len(raw_roll) >= 3 and raw_roll != "N/A" else "N/A"
+    answers_dict = extracted_data.get("answers", {})
 
-    answers_dict = data.get("answers", {})
     results = []
     correct, wrong, skipped, invalid = 0, 0, 0, 0
 
@@ -123,7 +141,8 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
         "skipped": skipped,
         "invalid": invalid,
         "score": correct,
-        "percentage": round((correct / len(results)) * 100, 1) if results else 0.0
+        "percentage": round((correct / len(results)) * 100, 1) if results else 0.0,
+        "engine_used": selected_model_used
     }
 
     return {
