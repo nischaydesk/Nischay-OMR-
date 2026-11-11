@@ -4,82 +4,90 @@ import time
 from google import genai
 from google.genai import types
 
-# एनवायरनमेंट वेरिएबल से API Key स्वतः लोड होगी
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20):
-    # सुपर-फास्ट और बिना किसी भ्रम वाला सख्त विज़न प्रॉम्प्ट
     prompt = f"""
-    You are an ultra-high precision, deterministic OMR bubble scanner and OCR engine.
-    Analyze the uploaded OMR sheet image and evaluate strictly from question 1 to {total_questions}.
+    You are an ultra-strict OMR verification and evaluation system.
 
-    CRITICAL SCANNING RULES:
-    1. A marked bubble is one where the inside of circle A, B, C, or D is DARKENED or FILLED WITH INK (pen/pencil).
-    2. Do NOT confuse the printed letter inside an empty circle with an ink mark. If a circle only has the printed letter and white background, it is UNMARKED.
-    3. Look row by row: For each question Q1 to Q{total_questions}, identify which single letter (A, B, C, or D) is filled.
-    4. If no bubble is darkened for a question, output "-".
-    5. If multiple bubbles are darkened for the same question, output "INVALID".
-    6. Read CANDIDATE NAME and ROLL NUMBER from the top header box. If illegible or blank, output "STUDENT" and "N/A".
+    STEP 1: OMR VALIDATION (MANDATORY)
+    - Check if this image is actually an OMR (Optical Mark Recognition) answer sheet containing a numbered bubble grid (A, B, C, D).
+    - If the image is a screenshot, random picture, document, code, or anything OTHER than an OMR sheet, set "is_omr": false immediately and leave other fields empty.
 
-    Return ONLY a pure valid JSON object without markdown, formatting or backticks. Format exactly as:
+    STEP 2: STRICT ROLL NUMBER DETECTION
+    - Do NOT guess or take random text from headers/logs/URLs.
+    - Look EXCLUSIVELY for labels like "ROLL NO", "ROLL NUMBER", "अनुक्रमांक", "OMR NO", or a dedicated numeric barcode box.
+    - If no such labeled box exists or it does not contain a roll number, output "N/A".
+
+    STEP 3: BUBBLE SCANNING (Only if is_omr is true)
+    - Scan darkened circles for Q1 to Q{total_questions}.
+    - Ink filled = letter (A, B, C, D). Empty = "-". Multiple = "INVALID".
+
+    Return ONLY pure JSON without markdown or backticks:
     {{
-      "student_name": "PRINCE KUMAR",
-      "roll_no": "2608493105",
-      "answers": {{"1": "A", "2": "B", "3": "-", "4": "INVALID"}}
+      "is_omr": true,
+      "student_name": "STUDENT",
+      "roll_no": "N/A",
+      "answers": {{"1": "A", "2": "B"}}
+    }}
+    OR if NOT an OMR sheet:
+    {{
+      "is_omr": false,
+      "message": "यह वैध OMR शीट नहीं है। कृपया परीक्षा OMR उत्तर पत्रक की साफ़ फ़ोटो अपलोड करें।"
     }}
     """
 
     response = None
-    last_exception = None
-
-    # ऑटो-रीट्राई (फास्ट फेलओवर 1.0s)
     for attempt in range(1, 3):
         try:
             response = client.models.generate_content(
-                model='gemini-3.8-flash',
+                model='gemini-2.5-flash',
                 contents=[
-                    types.Part.from_bytes(
-                        data=image_bytes,
-                        mime_type="image/jpeg",
-                    ),
+                    types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"),
                     prompt
                 ],
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json",
-                    temperature=0.0  # शून्य टेम्परेचर से उत्तर में 100% सटीकता आती है, तुक्का नहीं लगता
+                    temperature=0.0
                 )
             )
             if response and response.text:
                 break
-        except Exception as e:
-            last_exception = e
+        except Exception:
             time.sleep(1.0)
 
     if not response or not response.text:
-        err_msg = str(last_exception) if last_exception else "कोई रिस्पॉन्स प्राप्त नहीं हुआ"
-        raise ValueError(f"AI विज़न स्कैनिंग में लोड अधिक है। पुनः प्रयास विफल: {err_msg}")
+        raise ValueError("सर्वर से संपर्क नहीं हो सका।")
 
-    # JSON पार्सिंग और संभावित मार्कडाउन क्लीनअप
     try:
         raw_text = response.text.strip()
-        if raw_text.startswith("```"):
-            raw_text = raw_text.split("\n", 1)[1]
-            if raw_text.endswith("```"):
-                raw_text = raw_text.rsplit("\n", 1)[0]
-        extracted_data = json.loads(raw_text.strip())
+        if "```" in raw_text:
+            raw_text = raw_text.split("```")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+        data = json.loads(raw_text.strip())
     except Exception as e:
-        raise ValueError(f"AI रिस्पॉन्स JSON पार्स करने में त्रुटि: {str(e)}")
+        raise ValueError("डेटा पार्स करने में त्रुटि आई।")
 
-    student_name = extracted_data.get("student_name", "STUDENT").strip().upper()
-    roll_no = str(extracted_data.get("roll_no", "N/A")).strip().upper()
-    answers_dict = extracted_data.get("answers", {})
+    # यदि इमेज OMR नहीं है
+    if not data.get("is_omr", True):
+        return {
+            "is_omr": False,
+            "message": data.get("message", "यह OMR शीट नहीं है! कृपया सही OMR शीट अपलोड करें।")
+        }
 
+    student_name = data.get("student_name", "STUDENT").strip().upper()
+    raw_roll = str(data.get("roll_no", "N/A")).strip().upper()
+
+    # सख्त रोल नंबर फ़िल्टर: अगर 3 अक्षर से कम या अमान्य सिंबल हों तो N/A
+    roll_no = raw_roll if len(raw_roll) >= 3 and raw_roll != "N/A" else "N/A"
+
+    answers_dict = data.get("answers", {})
     results = []
     correct, wrong, skipped, invalid = 0, 0, 0, 0
 
     for q_num in range(1, total_questions + 1):
         detected_val = answers_dict.get(str(q_num), "-").strip().upper()
-        # Answer key में इंट या स्ट्रिंग दोनों चेक करना
         key = answer_key.get(q_num, answer_key.get(str(q_num), '-'))
 
         if detected_val in ["-", "", "NONE", "SKIPPED"]:
@@ -119,6 +127,7 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
     }
 
     return {
+        "is_omr": True,
         "student_name": student_name,
         "roll_no": roll_no,
         "summary": summary,
