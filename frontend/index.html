@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nischay OMR Suite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+  <header>
+    <h1>Nischay OMR Scanner</h1>
+    <p>विद्यालय एवं कोचिंग परीक्षा मूल्यांकन पोर्टल</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(80)">80 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>1. मास्टर आंसर की (गोला टैप करें)</span>
+      <span style="font-size:11px; color:#64748b;">टैप करके बदलें</span>
+    </div>
+    <div class="bubble-matrix" id="matrixContainer"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2. विद्यार्थी की OMR कॉपी अपलोड करें</div>
+    <input type="file" id="fileUpload" accept="image/*" style="display:none;" onchange="onFileSelected()">
+    <button class="btn btn-primary" onclick="document.getElementById('fileUpload').click()">
+      📁 गैलरी / फ़ाइल से चुनें
+    </button>
+    <button class="btn btn-dark" onclick="triggerCamera()">
+      📷 सीधे कैमरे से स्कैन करें
+    </button>
+  </div>
+
+  <div class="loader" id="loader">शीट का विश्लेषण हो रहा है... कृपया रुकें</div>
+
+  <div class="results-panel" id="resultsPanel">
+    <div class="score-banner">
+      <h3>कुल प्राप्तांक (Score)</h3>
+      <div class="number" id="scoreDisplay">0 / 20</div>
+      <div class="breakdown">
+        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">सही</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">गलत</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">अमान्य</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">छोड़ा</div></div>
+      </div>
+    </div>
+
+    <button class="btn btn-green" onclick="downloadExcel()">
+      📥 मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
+    </button>
+
+    <div class="card" style="margin-top:16px; overflow-x:auto;">
+      <div class="card-title">प्रश्न-वार विस्तृत रिपोर्ट</div>
+      <div id="tableContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
