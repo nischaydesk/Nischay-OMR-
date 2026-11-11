@@ -1,14 +1,19 @@
+// Nischay OMR Pro - Core Application Controller
 const BACKEND_URL = "https://nischay-omr.onrender.com";
 
 let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
+// मास्टर आंसर की का स्टेट (डिफ़ॉल्ट 20 सवाल)
 let answerKey = {
   1:'B', 2:'A', 3:'C', 4:'B', 5:'C', 6:'D', 7:'A', 8:'C', 9:'B', 10:'D',
   11:'C', 12:'A', 13:'D', 14:'B', 15:'C', 16:'A', 17:'D', 18:'C', 19:'A', 20:'A'
 };
 
+// ==========================================
+// 1. MASTER KEY MATRIX UI BUILDER (5 to 100 Q)
+// ==========================================
 function renderMatrix() {
   const container = document.getElementById("matrixContainer");
   if (!container) return;
@@ -39,13 +44,24 @@ function selectOption(q, opt) {
   renderMatrix();
 }
 
+// 5 से 100 तक डायनामिक सवाल सेट करने का फ़ंक्शन
 function setQuestions(num) {
-  questionCount = num;
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  if (event && event.target) {
-    event.target.classList.add('active');
-  }
+  num = parseInt(num);
+  if (isNaN(num) || num < 5) num = 5;
+  if (num > 100) num = 100;
 
+  questionCount = num;
+
+  // टैब बटन्स की एक्टिव क्लास अपडेट करना
+  document.querySelectorAll('.tab-item').forEach(btn => {
+    btn.classList.remove('active');
+    const text = btn.innerText;
+    if (text.includes(String(num))) {
+      btn.classList.add('active');
+    }
+  });
+
+  // नई संख्या के लिए डिफ़ॉल्ट 'A' सेट करना
   for (let i = 1; i <= num; i++) {
     if (!answerKey[i]) answerKey[i] = "A";
   }
@@ -53,6 +69,9 @@ function setQuestions(num) {
   renderMatrix();
 }
 
+// ==========================================
+// 2. FILE & CAMERA PREVIEW CONTROLLER
+// ==========================================
 function handleFilePreview(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -82,11 +101,12 @@ function handleFilePreview(e) {
 
   if (btnScan) {
     btnScan.disabled = false;
-    btnScan.style.background = "#2563eb";
-    btnScan.style.cursor = "pointer";
   }
 }
 
+// ==========================================
+// 3. SCAN EXECUTION (RENDER BACKEND API)
+// ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
     alert("कृपया पहले OMR शीट की फ़ाइल चुनें!");
@@ -98,11 +118,9 @@ async function executeScan() {
   fd.append("answer_key", JSON.stringify(answerKey));
   fd.append("total_q", questionCount);
 
-  const loader = document.getElementById("loader");
   const resPanel = document.getElementById("resultsPanel");
   const btnScan = document.getElementById("btnStartScan");
 
-  if (loader) loader.style.display = "block";
   if (resPanel) resPanel.style.display = "none";
   if (btnScan) btnScan.disabled = true;
 
@@ -113,12 +131,11 @@ async function executeScan() {
     });
 
     const data = await res.json();
-    if (loader) loader.style.display = "none";
     if (btnScan) btnScan.disabled = false;
 
     if (!res.ok) {
       alert("Error: " + (data.detail || "Sheet चेक करने में समस्या आई"));
-      return;
+      throw new Error(data.detail || "API Error");
     }
 
     evaluationResult = data;
@@ -129,14 +146,24 @@ async function executeScan() {
     }
 
   } catch (err) {
-    if (loader) loader.style.display = "none";
     if (btnScan) btnScan.disabled = false;
     alert("सर्वर कनेक्ट नहीं हुआ। Render सर्वर को शुरू होने में 30 सेकंड का समय लग सकता है।");
+    throw err;
   }
 }
 
+// ==========================================
+// 4. RENDER RESULTS & STUDENT CREDENTIALS
+// ==========================================
 function renderResults(data) {
   const s = data.summary;
+  
+  // छात्र का नाम और रोल नंबर प्रदर्शित करना
+  const nameEl = document.getElementById("resStudentName");
+  const rollEl = document.getElementById("resRollNo");
+  if (nameEl) nameEl.innerText = data.student_name || "STUDENT";
+  if (rollEl) rollEl.innerText = data.roll_no || "N/A";
+
   document.getElementById("scoreDisplay").innerText = `${s.score} / ${s.total_questions}`;
   document.getElementById("cntCor").innerText = s.correct;
   document.getElementById("cntWro").innerText = s.wrong;
@@ -165,6 +192,9 @@ function renderResults(data) {
   document.getElementById("resultsPanel").style.display = "block";
 }
 
+// ==========================================
+// 5. EXPORT: CLASS EXCEL (.XLSX)
+// ==========================================
 async function downloadExcel() {
   if (!evaluationResult) {
     alert("पहले OMR शीट स्कैन करें!");
@@ -185,7 +215,7 @@ async function downloadExcel() {
     const blob = await res.blob();
     const a = document.createElement("a");
     a.href = window.URL.createObjectURL(blob);
-    a.download = `Nischay_OMR_Report_${Date.now()}.xlsx`;
+    a.download = `Nischay_OMR_Class_Report_${Date.now()}.xlsx`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -194,6 +224,24 @@ async function downloadExcel() {
   }
 }
 
+// ==========================================
+// 6. EXPORT: STUDENT PDF SCORECARD
+// ==========================================
+function downloadStudentPDF() {
+  if (!evaluationResult) {
+    alert("पहले OMR शीट स्कैन करें!");
+    return;
+  }
+
+  // सीधे pdf_engine.js के फंक्शन को कॉल करना
+  if (typeof generateStudentPDF === "function") {
+    generateStudentPDF(evaluationResult);
+  } else {
+    alert("PDF Engine लोड नहीं हुआ। कृपया पेज रिफ्रेश करें।");
+  }
+}
+
+// पेज लोड पर ग्रिड शुरू करना
 window.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
 });
