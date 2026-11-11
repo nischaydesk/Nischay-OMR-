@@ -5,7 +5,7 @@ let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
-// मास्टर आंसर की खाली (कोई डिफ़ॉल्ट उत्तर नहीं)
+// मास्टर आंसर की (खाली अवस्था)
 let answerKey = {};
 
 // ==========================================
@@ -58,10 +58,61 @@ function showToast(message, type = "info") {
 }
 
 // ==========================================
-// 1. HIGH-SPEED IMAGE OPTIMIZER (5s Scan Fix)
+// 1. TYPEWRITER ERROR MODAL (Invalid OMR)
+// ==========================================
+function showTypewriterError(text) {
+  let box = document.getElementById("omrValidationErrorBox");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "omrValidationErrorBox";
+    box.style.position = "fixed";
+    box.style.top = "50%";
+    box.style.left = "50%";
+    box.style.transform = "translate(-50%, -50%)";
+    box.style.zIndex = "100000";
+    box.style.width = "90%";
+    box.style.maxWidth = "380px";
+    box.style.background = "#111827";
+    box.style.border = "2px solid #ef4444";
+    box.style.borderRadius = "16px";
+    box.style.padding = "24px 20px";
+    box.style.textAlign = "center";
+    box.style.boxShadow = "0 20px 40px rgba(0,0,0,0.7)";
+    box.style.color = "#f8fafc";
+    box.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+    document.body.appendChild(box);
+  }
+
+  box.style.display = "block";
+  box.innerHTML = `
+    <div style="font-size: 40px; margin-bottom: 12px;">🚫</div>
+    <div style="font-size: 16px; font-weight: 800; color: #ef4444; margin-bottom: 10px;">अमान्य OMR दस्तावेज़</div>
+    <div id="typewriterTextTarget" style="font-size: 13.5px; line-height: 1.6; min-height: 48px; color: #cbd5e1;"></div>
+    <button onclick="document.getElementById('omrValidationErrorBox').style.display='none'" 
+            style="margin-top: 18px; padding: 10px 24px; background: #ef4444; color: #fff; border: none; border-radius: 8px; font-weight: 800; cursor: pointer;">
+      ठीक है (OK)
+    </button>
+  `;
+
+  const target = document.getElementById("typewriterTextTarget");
+  target.innerText = "";
+  let i = 0;
+  const speed = 30;
+
+  function typeChar() {
+    if (i < text.length) {
+      target.innerText += text.charAt(i);
+      i++;
+      setTimeout(typeChar, speed);
+    }
+  }
+  typeChar();
+}
+
+// ==========================================
+// 2. HIGH-SPEED IMAGE OPTIMIZER (Client Pre-processing)
 // ==========================================
 async function compressImageForFastScan(file) {
-  // यदि फाइल PDF है तो उसे कंप्रेस न करें
   if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
     return file;
   }
@@ -77,7 +128,6 @@ async function compressImageForFastScan(file) {
       let width = img.width;
       let height = img.height;
 
-      // अधिकतम 1200px रिज़ॉल्यूशन — AI विज़न के लिए सबसे उपयुक्त और सुपरफास्ट
       const maxDim = 1200;
       if (width > height && width > maxDim) {
         height = Math.round((height * maxDim) / width);
@@ -91,11 +141,9 @@ async function compressImageForFastScan(file) {
       canvas.height = height;
       const ctx = canvas.getContext("2d");
 
-      // कंट्रास्ट और शार्पनेस फ़िल्टर ताकि स्याही और छपे अक्षरों में कोई भ्रम न रहे
       ctx.filter = "contrast(1.15) brightness(1.02)";
       ctx.drawImage(img, 0, 0, width, height);
 
-      // 0.85 क्वालिटी पर JPEG ब्लॉब (~250KB से 350KB साइज)
       canvas.toBlob((blob) => {
         if (!blob) {
           resolve(file);
@@ -113,7 +161,7 @@ async function compressImageForFastScan(file) {
 }
 
 // ==========================================
-// 2. MASTER KEY MATRIX UI BUILDER (5 to 100 Q)
+// 3. MASTER KEY MATRIX UI BUILDER
 // ==========================================
 function renderMatrix() {
   const container = document.getElementById("matrixContainer");
@@ -168,7 +216,7 @@ function setQuestions(num) {
 }
 
 // ==========================================
-// 3. SCAN EXECUTION (LIGHTNING FAST)
+// 4. SCAN EXECUTION
 // ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
@@ -177,14 +225,13 @@ async function executeScan() {
   }
 
   if (Object.keys(answerKey).length === 0) {
-    showToast("कृपया मास्टर कुंजी में कम से कम सही उत्तर सेट करें!", "warning");
+    showToast("कृपया मास्टर कुंजी में सही उत्तर सेट करें!", "warning");
     return;
   }
 
   const resPanel = document.getElementById("resultsPanel");
   if (resPanel) resPanel.style.display = "none";
 
-  // फाइल को सुपरफास्ट और हाई-कंट्रास्ट मोड में तैयार करना
   const fileToSend = await compressImageForFastScan(selectedOmrFile);
 
   const fd = new FormData();
@@ -206,6 +253,11 @@ async function executeScan() {
       throw new Error(msg);
     }
 
+    if (data.is_omr === false) {
+      showTypewriterError(data.message || "यह OMR शीट नहीं है! कृपया वैध परीक्षा OMR उत्तर पत्रक अपलोड करें।");
+      return;
+    }
+
     evaluationResult = data;
     renderResults(data);
     showToast("मूल्यांकन सफलतापूर्वक संपन्न हुआ!", "success");
@@ -215,13 +267,13 @@ async function executeScan() {
     }
 
   } catch (err) {
-    showToast("सर्वर प्रतिक्रिया में विलंब या त्रुटि। पुनः प्रयास करें।", "error");
+    showToast("सर्वर प्रतिक्रिया में त्रुटि। पुनः प्रयास करें।", "error");
     throw err;
   }
 }
 
 // ==========================================
-// 4. RENDER RESULTS & STUDENT CREDENTIALS
+// 5. RENDER RESULTS & STUDENT CREDENTIALS
 // ==========================================
 function renderResults(data) {
   const s = data.summary;
@@ -262,7 +314,7 @@ function renderResults(data) {
 }
 
 // ==========================================
-// 5. EXPORT: CLASS EXCEL (.XLSX)
+// 6. EXPORT: CLASS EXCEL (.XLSX)
 // ==========================================
 async function downloadExcel() {
   if (!evaluationResult) {
@@ -295,7 +347,7 @@ async function downloadExcel() {
 }
 
 // ==========================================
-// 6. EXPORT: STUDENT PDF SCORECARD
+// 7. EXPORT: STUDENT PDF SCORECARD
 // ==========================================
 function downloadStudentPDF() {
   if (!evaluationResult) {
