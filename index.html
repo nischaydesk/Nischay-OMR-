@@ -62,7 +62,7 @@
       transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* Top Sticky Header - Super Clean (No Outer Buttons) */
+    /* Top Sticky Header */
     .top-navbar {
       background: var(--nav-bg);
       border-bottom: 1px solid var(--card-border);
@@ -112,7 +112,7 @@
       border-color: #bfdbfe;
     }
 
-    /* Modern 3-Line Hamburger Button */
+    /* 3-Line Hamburger Button */
     .hamburger-btn {
       width: 42px;
       height: 42px;
@@ -247,7 +247,7 @@
       text-align: center;
     }
 
-    /* Drawer Quick Switches (Language & Dark Mode Inside Drawer) */
+    /* Drawer Quick Controls */
     .drawer-quick-controls {
       background: var(--section-alt);
       border: 1px solid var(--card-border);
@@ -279,7 +279,7 @@
       cursor: pointer;
     }
 
-    /* Quick Horizontal Sub-bar */
+    /* Sub Navigation Bar */
     .sub-nav-bar {
       background: var(--nav-bg);
       border-bottom: 1px solid var(--card-border);
@@ -304,7 +304,7 @@
       border: 1px solid var(--card-border);
     }
 
-    /* Minimalist High-End Hero (No Dummy Numbers) */
+    /* Hero Section */
     .hero-banner {
       background: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
       padding: 28px 16px 20px;
@@ -336,7 +336,7 @@
       color: var(--text-muted);
     }
 
-    /* Main Console Layout */
+    /* Main Console */
     .main-wrapper {
       max-width: 500px;
       margin: 0 auto 50px;
@@ -365,7 +365,7 @@
       font-weight: normal;
     }
 
-    /* Custom Non-Default Segmented Tabs */
+    /* Tabs & Slider */
     .tabs-group {
       display: flex;
       background: var(--section-alt);
@@ -393,7 +393,6 @@
       box-shadow: 0 2px 10px var(--accent-glow);
     }
 
-    /* Pro Custom Slider */
     .slider-box {
       background: var(--section-alt);
       padding: 12px 14px;
@@ -569,7 +568,7 @@
       box-shadow: none;
     }
 
-    /* REAL CONTINUOUS UNSTOPPABLE 0-100 PROGRESS BAR */
+    /* REAL CONTINUOUS UNSTOPPABLE PROGRESS BAR */
     .progress-box {
       display: none;
       margin-top: 12px;
@@ -606,13 +605,13 @@
       text-align: center;
     }
 
-    /* Results */
+    /* Results Dashboard */
     .results-panel {
       display: none;
       margin-top: 8px;
     }
     .score-banner {
-      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      background: linear-gradient(135deg, #1e40af, #2563eb);
       color: white;
       border-radius: 14px;
       padding: 20px 14px;
@@ -706,7 +705,7 @@
 </head>
 <body>
 
-<!-- Top Clean Navbar -->
+<!-- 1. Header with Hamburger Menu -->
 <nav class="top-navbar">
   <div class="nav-container">
     <div class="nav-left">
@@ -719,11 +718,11 @@
         <span class="bolt">⚡</span> Nischay OMR
       </a>
     </div>
-    <span class="brand-badge">PRO v2.4 AI</span>
+    <span class="brand-badge" data-i18n="brand_sub">PRO v2.4 AI</span>
   </div>
 </nav>
 
-<!-- Slide-In Drawer Navigation (Language and Dark Mode Inside Here) -->
+<!-- 2. Slide-In Drawer Navigation -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeDrawer()"></div>
 
 <aside class="nav-drawer" id="navDrawer">
@@ -733,76 +732,76 @@
   </div>
 
   <div class="drawer-body">
-    <!-- Quick Controls inside drawer -->
+    <!-- Controls Inside Drawer -->
     <div class="drawer-quick-controls">
       <div class="drawer-ctrl-row">
-        <span>थीम मोड</span>
+        <span data-i18n="drawer_theme_title">थीम मोड</span>
         <button class="switch-btn" id="themeSwitchBtn" onclick="toggleThemeLocal()">🌙 डार्क मोड</button>
       </div>
       <div class="drawer-ctrl-row">
-        <span>भाषा (Language)</span>
-        <button class="switch-btn" id="langSwitchBtn" onclick="alert('भाषा फ़ाइल जल्द जोड़ी जाएगी')">🌐 हिंदी</button>
+        <span data-i18n="drawer_lang_title">भाषा (Language)</span>
+        <button class="switch-btn" id="langSwitchBtn" onclick="toggleLanguage()">🌐 English</button>
       </div>
     </div>
 
-    <div class="drawer-section-lbl">मुख्य नेविगेशन</div>
+    <div class="drawer-section-lbl" data-i18n="drawer_nav_heading">मुख्य नेविगेशन</div>
     <a href="#consoleSection" class="drawer-link" onclick="closeDrawer()">
-      <span class="icon">🔍</span> <span>स्कैनर कंसोल</span>
+      <span class="icon">🔍</span> <span data-i18n="drawer_nav_scanner">स्कैनर कंसोल</span>
     </a>
     <a href="how_its_workes.html" class="drawer-link">
-      <span class="icon">⚙️</span> <span>हाउ इट वर्क्स (OMR Flow)</span>
+      <span class="icon">⚙️</span> <span data-i18n="drawer_nav_how">हाउ इट वर्क्स (OMR Flow)</span>
     </a>
 
-    <div class="drawer-section-lbl">सहायता व नीतियां</div>
+    <div class="drawer-section-lbl" data-i18n="drawer_nav_help">सहायता व नीतियां</div>
     <a href="faq.html" class="drawer-link">
-      <span class="icon">❓</span> <span>FAQ प्रश्नोत्तरी</span>
+      <span class="icon">❓</span> <span data-i18n="drawer_nav_faq">FAQ प्रश्नोत्तरी</span>
     </a>
     <a href="privacy.html" class="drawer-link">
-      <span class="icon">🛡️</span> <span>डेटा सुरक्षा (Privacy)</span>
+      <span class="icon">🛡️</span> <span data-i18n="drawer_nav_privacy">डेटा सुरक्षा (Privacy)</span>
     </a>
     <a href="terms.html" class="drawer-link">
-      <span class="icon">📜</span> <span>नियम एवं शर्तें (Terms)</span>
+      <span class="icon">📜</span> <span data-i18n="drawer_nav_terms">नियम एवं शर्तें (Terms)</span>
     </a>
   </div>
 </aside>
 
-<!-- Sub Navigation Anchor Links -->
+<!-- Sub Navigation Quick Bar -->
 <div class="sub-nav-bar">
-  <a href="#consoleSection">स्कैनर कंसोल</a>
-  <a href="how_its_workes.html">हाउ इट वर्क्स ↗</a>
-  <a href="faq.html">FAQ ↗</a>
-  <a href="privacy.html">डेटा सुरक्षा ↗</a>
-  <a href="terms.html">नियम व शर्तें ↗</a>
+  <a href="#consoleSection" data-i18n="sub_nav_scanner">स्कैनर कंसोल</a>
+  <a href="how_its_workes.html" data-i18n="sub_nav_how">हाउ इट वर्क्स ↗</a>
+  <a href="faq.html" data-i18n="sub_nav_faq">FAQ ↗</a>
+  <a href="privacy.html" data-i18n="sub_nav_privacy">डेटा सुरक्षा ↗</a>
+  <a href="terms.html" data-i18n="sub_nav_terms">नियम व शर्तें ↗</a>
 </div>
 
-<!-- Header Intro -->
+<!-- 3. Minimalist Hero -->
 <header class="hero-banner">
-  <div class="hero-tag">⚡ AI-DRIVEN HIGH SPEED SCANNER</div>
-  <h1>स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
-  <p>बिहार विद्यालय परीक्षा समिति (BSEB) एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।</p>
+  <div class="hero-tag" data-i18n="hero_badge">⚡ AI-DRIVEN HIGH SPEED SCANNER</div>
+  <h1 data-i18n="hero_title">स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
+  <p data-i18n="hero_desc">बिहार विद्यालय परीक्षा समिति (BSEB) एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।</p>
 </header>
 
-<!-- Main Console -->
+<!-- 4. Main Console -->
 <div class="main-wrapper" id="consoleSection">
 
   <!-- Questions Dynamic Selector -->
   <div class="app-card">
     <div class="card-head">
-      <span>प्रश्नों की संख्या चुनें (Questions Limit)</span>
-      <span class="sub-hint">5 से 100 प्रश्न समर्थित</span>
+      <span data-i18n="q_limit_title">प्रश्नों की संख्या चुनें (Questions Limit)</span>
+      <span class="sub-hint" data-i18n="q_limit_sub">5 से 100 प्रश्न समर्थित</span>
     </div>
 
     <div class="tabs-group">
-      <div class="tab-item active" onclick="setQuestionsQuick(20)">20 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(50)">50 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(80)">80 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(100)">100 सवाल</div>
+      <div class="tab-item active" onclick="setQuestionsQuick(20)" data-i18n="tab_20">20 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(50)" data-i18n="tab_50">50 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(80)" data-i18n="tab_80">80 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(100)" data-i18n="tab_100">100 सवाल</div>
     </div>
 
     <div class="slider-box">
       <div class="slider-info">
-        <span>कस्टम सवाल संख्या:</span>
-        <span style="color:#60a5fa;"><strong id="rangeValDisplay">20</strong> सवाल</span>
+        <span data-i18n="custom_q_label">कस्टम सवाल संख्या:</span>
+        <span style="color:#60a5fa;"><strong id="rangeValDisplay">20</strong> <span data-i18n="q_unit">सवाल</span></span>
       </div>
       <input type="range" id="customQuestionRange" min="5" max="100" value="20" step="1" oninput="onSliderChange(this.value)">
     </div>
@@ -811,8 +810,8 @@
   <!-- Master Key Card -->
   <div class="app-card">
     <div class="card-head">
-      <span>1. मास्टर उत्तर कुंजी (Answer Key)</span>
-      <span class="sub-hint">गोला छूकर सही उत्तर सेट करें</span>
+      <span data-i18n="card1_title">1. मास्टर उत्तर कुंजी (Answer Key)</span>
+      <span class="sub-hint" data-i18n="card1_sub">गोला छूकर सही उत्तर सेट करें</span>
     </div>
     <div id="matrixContainer"></div>
   </div>
@@ -820,21 +819,21 @@
   <!-- Upload and Scan Card -->
   <div class="app-card">
     <div class="card-head">
-      <span>2. छात्र की OMR शीट अपलोड करें</span>
+      <span data-i18n="card2_title">2. छात्र की OMR शीट अपलोड करें</span>
     </div>
 
     <label class="btn-action btn-upload">
-      📁 डिवाइस फ़ाइलें / Documents चुनें
+      <span data-i18n="btn_upload_file">📁 डिवाइस फ़ाइलें / Documents चुनें</span>
       <input type="file" id="fileUpload" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <label class="btn-action btn-camera">
-      📷 सीधे कैमरे से फ़ोटो खींचें
+      <span data-i18n="btn_camera">📷 सीधे कैमरे से फ़ोटो खींचें</span>
       <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <div class="file-status-box" id="statusBox">
-      <div id="statusText">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
+      <div id="statusText" data-i18n="status_no_file">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
@@ -843,62 +842,63 @@
     </div>
 
     <button type="button" class="btn-scan-trigger" id="btnStartScan" onclick="executeScanWithDynamicProgress()" disabled>
-      🔍 शीट स्कैन शुरू करें
+      <span data-i18n="btn_start_scan">🔍 शीट स्कैन शुरू करें</span>
     </button>
 
     <!-- UNSTOPPABLE REAL PROGRESS METER -->
     <div class="progress-box" id="progressWrapper">
       <div class="progress-head">
-        <span id="progressStateTitle">प्रोसेसिंग आरंभ...</span>
+        <span id="progressStateTitle" data-i18n="prog_starting">प्रोसेसिंग आरंभ...</span>
         <span id="progressPercentText">0%</span>
       </div>
       <div class="progress-bar-track">
         <div class="progress-bar-fill" id="progressBarFill"></div>
       </div>
-      <div class="progress-desc" id="progressStatusDetail">इमेज डेटा तैयार किया जा रहा है...</div>
+      <div class="progress-desc" id="progressStatusDetail" data-i18n="prog_encoding">इमेज डेटा तैयार किया जा रहा है...</div>
     </div>
   </div>
 
   <!-- Results Dashboard -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
-      <h3>कुल प्राप्तांक (TOTAL MARKS)</h3>
+      <h3 data-i18n="score_title">कुल प्राप्तांक (TOTAL MARKS)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
       
       <div id="studentIdentityCard" style="background:rgba(255,255,255,0.18); padding:6px 12px; border-radius:8px; margin-bottom:12px; font-weight:700; font-size:13px;">
-        छात्र: <span id="resStudentName">STUDENT</span> (रोल: <span id="resRollNo">N/A</span>)
+        <span data-i18n="student_prefix">छात्र:</span> <span id="resStudentName">STUDENT</span> (<span data-i18n="roll_prefix">रोल:</span> <span id="resRollNo">N/A</span>)
       </div>
 
       <div class="breakdown">
-        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl">सही (+1)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl">गलत (0)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl">अमान्य</div></div>
-        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl">छोड़ा</div></div>
+        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl" data-i18n="lbl_correct">सही (+1)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl" data-i18n="lbl_wrong">गलत (0)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl" data-i18n="lbl_invalid">अमान्य</div></div>
+        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl" data-i18n="lbl_skipped">छोड़ा</div></div>
       </div>
     </div>
 
     <button type="button" class="btn-download-excel" onclick="downloadExcel()">
-      📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
+      <span data-i18n="btn_download_excel">📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें</span>
     </button>
 
     <button type="button" class="btn-download-pdf" onclick="downloadStudentPDF()">
-      📄 छात्र मार्कशीट PDF डाउनलोड करें
+      <span data-i18n="btn_download_pdf">📄 छात्र मार्कशीट PDF डाउनलोड करें</span>
     </button>
 
     <div class="app-card" style="overflow-x:auto;">
-      <div class="card-head">प्रश्न-वार विस्तृत रिपोर्ट</div>
+      <div class="card-head" data-i18n="table_title">प्रश्न-वार विस्तृत रिपोर्ट</div>
       <div id="tableContainer"></div>
     </div>
   </div>
 
 </div>
 
-<footer>
+<footer data-i18n="footer_copy">
   © 2026 NischayDesk. सर्वाधिकार सुरक्षित।
 </footer>
 
+<script src="translations.js"></script>
 <script src="pdf_engine.js"></script>
-<script src="app.js?v=7001"></script>
+<script src="app.js?v=8001"></script>
 
 <script>
   // Drawer Toggler
@@ -951,9 +951,7 @@
     setQuestions(num);
   }
 
-  // ========================================================
-  // REAL CONTINUOUS UNSTOPPABLE 0-100 PROGRESS ENGINE
-  // ========================================================
+  // UNSTOPPABLE REAL PROGRESS ENGINE
   function setProgressVal(p, title, desc) {
     const wrap = document.getElementById("progressWrapper");
     const fill = document.getElementById("progressBarFill");
@@ -970,23 +968,23 @@
 
   async function executeScanWithDynamicProgress() {
     let currentP = 2;
-    setProgressVal(currentP, "प्रोसेसिंग आरंभ...", "इमेज डेटा को एन्कोड किया जा रहा है...");
+    const isEn = (localStorage.getItem("nischay_omr_lang") === "en");
+    
+    setProgressVal(currentP, isEn ? "Starting..." : "प्रोसेसिंग आरंभ...", isEn ? "Encoding image data..." : "इमेज डेटा तैयार किया जा रहा है...");
 
     let isApiCompleted = false;
 
-    // यह टाइमर बिना रुके लगातार स्मूथली बढ़ता रहेगा, कहीं अटकेगा नहीं
     const progressInterval = setInterval(() => {
       if (!isApiCompleted) {
         if (currentP < 30) {
           currentP += 2.5;
-          setProgressVal(currentP, "शीट विश्लेषण...", "कोनों और अलाइनमेंट का पता लगाया जा रहा है...");
+          setProgressVal(currentP, isEn ? "Analyzing Sheet..." : "शीट विश्लेषण...", isEn ? "Detecting corners & alignment..." : "कोनों और अलाइनमेंट का पता लगाया जा रहा है...");
         } else if (currentP < 65) {
           currentP += 1.8;
-          setProgressVal(currentP, "AI विज़न सक्रिय...", "छात्र का नाम और रोल नंबर पढ़ा जा रहा है...");
+          setProgressVal(currentP, isEn ? "AI Vision Active..." : "AI विज़न सक्रिय...", isEn ? "Reading student name & roll number..." : "छात्र का नाम और रोल नंबर पढ़ा जा रहा है...");
         } else if (currentP < 96) {
-          // 88 पर रुकेगा नहीं, 96 तक धीरे-धीरे लगातार टिक करता रहेगा
           currentP += 0.8;
-          setProgressVal(currentP, "मास्टर कुंजी मिलान...", "बबल्स और विकल्पों की तुलना जारी है...");
+          setProgressVal(currentP, isEn ? "Matching Master Key..." : "मास्टर कुंजी मिलान...", isEn ? "Comparing marked bubbles..." : "बबल्स और विकल्पों की तुलना जारी है...");
         }
       }
     }, 120);
@@ -996,8 +994,7 @@
       isApiCompleted = true;
       clearInterval(progressInterval);
 
-      // सर्वर डेटा मिलते ही तेजी से 100% पूरा होगा
-      setProgressVal(100, "सफल!", "मूल्यांकन संपन्न, परिणाम तैयार है।");
+      setProgressVal(100, isEn ? "Success!" : "सफल!", isEn ? "Evaluation completed." : "मूल्यांकन संपन्न, परिणाम तैयार है।");
       setTimeout(() => {
         const wrap = document.getElementById("progressWrapper");
         if (wrap) wrap.style.display = "none";
@@ -1011,7 +1008,7 @@
     }
   }
 
-  // Load Saved Theme
+  // Load Saved Preferences
   window.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("nischay_theme_pref") === "light") {
       document.body.classList.add("light-mode");
