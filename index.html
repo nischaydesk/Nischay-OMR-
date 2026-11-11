@@ -528,21 +528,57 @@
       word-break: break-all;
     }
 
+    /* REAL-TIME SCANNING VISUAL ENGINE WITH LASER BEAM */
     .preview-box {
       display: none;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       background: #000;
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
-      max-height: 240px;
+      max-height: 260px;
       text-align: center;
+      position: relative;
+      border: 1.5px solid #1e293b;
     }
     .preview-box img {
       max-width: 100%;
-      max-height: 240px;
+      max-height: 260px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
+    }
+    .scan-laser-line {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #22c55e;
+      box-shadow: 0 0 14px 4px rgba(34, 197, 94, 0.85);
+      z-index: 5;
+    }
+    .scan-overlay-grid {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(34, 197, 94, 0.08) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(34, 197, 94, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    @keyframes laserSweep {
+      0% { top: 0%; opacity: 0.8; }
+      50% { top: 96%; opacity: 1; }
+      100% { top: 0%; opacity: 0.8; }
+    }
+    .scanning-active .scan-laser-line {
+      display: block;
+      animation: laserSweep 1.8s ease-in-out infinite;
+    }
+    .scanning-active .scan-overlay-grid {
+      display: block;
     }
 
     .btn-scan-trigger {
@@ -611,7 +647,7 @@
       margin-top: 8px;
     }
     .score-banner {
-      background: linear-gradient(135deg, #1e40af, #2563eb);
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
       color: white;
       border-radius: 14px;
       padding: 20px 14px;
@@ -837,7 +873,10 @@
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
+    <!-- Live Preview Box with Real-Time Scanning Visuals -->
     <div class="preview-box" id="previewContainer">
+      <div class="scan-laser-line"></div>
+      <div class="scan-overlay-grid"></div>
       <img id="imagePreview" src="" alt="OMR Preview">
     </div>
 
@@ -898,7 +937,8 @@
 
 <script src="translations.js"></script>
 <script src="pdf_engine.js"></script>
-<script src="app.js?v=8001"></script>
+<script src="batch_manager.js"></script>
+<script src="app.js?v=9001"></script>
 
 <script>
   // Drawer Toggler
@@ -951,7 +991,7 @@
     setQuestions(num);
   }
 
-  // UNSTOPPABLE REAL PROGRESS ENGINE
+  // REAL ADAPTIVE PROGRESS & LIVE SCANNER CONTROLLER
   function setProgressVal(p, title, desc) {
     const wrap = document.getElementById("progressWrapper");
     const fill = document.getElementById("progressBarFill");
@@ -967,42 +1007,50 @@
   }
 
   async function executeScanWithDynamicProgress() {
-    let currentP = 2;
+    const previewBox = document.getElementById("previewContainer");
+    if (previewBox) previewBox.classList.add("scanning-active");
+
+    let currentP = 4;
     const isEn = (localStorage.getItem("nischay_omr_lang") === "en");
     
     setProgressVal(currentP, isEn ? "Starting..." : "प्रोसेसिंग आरंभ...", isEn ? "Encoding image data..." : "इमेज डेटा तैयार किया जा रहा है...");
 
     let isApiCompleted = false;
 
+    // सर्वर से सिंक रहने वाला स्मूथ लिनियर टिकर
     const progressInterval = setInterval(() => {
       if (!isApiCompleted) {
-        if (currentP < 30) {
-          currentP += 2.5;
-          setProgressVal(currentP, isEn ? "Analyzing Sheet..." : "शीट विश्लेषण...", isEn ? "Detecting corners & alignment..." : "कोनों और अलाइनमेंट का पता लगाया जा रहा है...");
-        } else if (currentP < 65) {
-          currentP += 1.8;
-          setProgressVal(currentP, isEn ? "AI Vision Active..." : "AI विज़न सक्रिय...", isEn ? "Reading student name & roll number..." : "छात्र का नाम और रोल नंबर पढ़ा जा रहा है...");
+        if (currentP < 35) {
+          currentP += 2.2;
+          setProgressVal(currentP, isEn ? "Analyzing Sheet..." : "शीट विश्लेषण...", isEn ? "Live Vision Deskew & Alignment..." : "लाइव विज़न डेस्क्यू और अलाइनमेंट...");
+        } else if (currentP < 70) {
+          currentP += 1.4;
+          setProgressVal(currentP, isEn ? "AI Vision Active..." : "AI विज़न सक्रिय...", isEn ? "Reading student credentials & bubbles..." : "छात्र का नाम, रोल नंबर और बबल्स डिकोड जारी...");
         } else if (currentP < 96) {
-          currentP += 0.8;
-          setProgressVal(currentP, isEn ? "Matching Master Key..." : "मास्टर कुंजी मिलान...", isEn ? "Comparing marked bubbles..." : "बबल्स और विकल्पों की तुलना जारी है...");
+          currentP += 0.6;
+          setProgressVal(currentP, isEn ? "Matching Master Key..." : "मास्टर कुंजी मिलान...", isEn ? "Finalizing official scorecard..." : "स्कोरकार्ड और रिज़ल्ट तैयार किया जा रहा है...");
         }
       }
-    }, 120);
+    }, 110);
 
     try {
       await executeScan();
       isApiCompleted = true;
       clearInterval(progressInterval);
 
+      // सर्वर डेटा मिलते ही 100% पूरा और रिजल्ट तुरंत खुलेगा
       setProgressVal(100, isEn ? "Success!" : "सफल!", isEn ? "Evaluation completed." : "मूल्यांकन संपन्न, परिणाम तैयार है।");
+      if (previewBox) previewBox.classList.remove("scanning-active");
+
       setTimeout(() => {
         const wrap = document.getElementById("progressWrapper");
         if (wrap) wrap.style.display = "none";
-      }, 700);
+      }, 500);
 
     } catch (err) {
       isApiCompleted = true;
       clearInterval(progressInterval);
+      if (previewBox) previewBox.classList.remove("scanning-active");
       const wrap = document.getElementById("progressWrapper");
       if (wrap) wrap.style.display = "none";
     }
