@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Terms of Service - Nischay OMR Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Blue Loading Screen Animation */
+    #pageLoader {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    body.dark-mode #pageLoader {
+      background: #0b0f19;
+    }
+    .blue-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loader-text {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e40af;
+      letter-spacing: 0.5px;
+    }
+    body.dark-mode .loader-text {
+      color: #60a5fa;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 40px 18px 46px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: #e2e8f0;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .content-body {
+      max-width: 860px;
+      margin: -20px auto 50px;
+      padding: 0 16px;
+    }
+    .terms-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--card-border, #e2e8f0);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+    .terms-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main, #0f172a);
+      margin-bottom: 12px;
+    }
+    .terms-card p, .terms-card li {
+      font-size: 13.5px;
+      color: var(--text-muted, #475569);
+      line-height: 1.8;
+    }
+    .terms-card ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e40af;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Blue Loader -->
+  <div id="pageLoader">
+    <div class="blue-spinner"></div>
+    <div class="loader-text">Nischay OMR Pro लोड हो रहा है...</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="top-navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        ⚡ Nischay OMR <span class="brand-badge">PRO v2.4</span>
+      </a>
+      <div class="nav-right-tools">
+        <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Theme</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>📜 नियम एवं शर्तें (Terms of Service)</h1>
+    <p>Nischay OMR Pro प्लेटफ़ॉर्म और एआई मूल्यांकन सेवाओं के उपयोग की कानूनी व नीतिगत शर्तें</p>
+  </header>
+
+  <div class="content-body">
+    <div class="terms-card">
+      <h2>1. प्लेटफ़ॉर्म का उपयोग एवं स्वीकृति</h2>
+      <p>
+        Nischay OMR Pro का उपयोग करके आप इन नियमों और शर्तों से बंधे होने की सहमति देते हैं। यह सेवा कोचिंग संस्थानों, स्कूलों, शिक्षकों और छात्रों को स्वचालित और पारदर्शी OMR मूल्यांकन प्रदान करने हेतु डिज़ाइन की गई है।
+      </p>
+    </div>
+
+    <div class="terms-card">
+      <h2>2. बौद्धिक संपदा एवं सामग्री उत्तरदायित्व</h2>
+      <p>
+        अपलोड की जाने वाली प्रश्न पुस्तिकाओं, उत्तर कुंजियों (Answer Keys) और OMR शीटों के कॉपीराइट व सत्यता की जिम्मेदारी पूर्णतः उपयोगकर्ता संस्थान की होगी। उपयोगकर्ता किसी भी ऐसी सामग्री को अपलोड नहीं करेंगे जो बौद्धिक संपदा अधिकारों का उल्लंघन करती हो।
+      </p>
+    </div>
+
+    <div class="terms-card">
+      <h2>3. AI विज़न मूल्यांकन की सीमाएं</h2>
+      <p>
+        हमारा AI विज़न मॉडल 99.9% से अधिक सटीकता प्रदान करने के लिए प्रशिक्षित है। तथापि, यदि कोई OMR शीट अत्यधिक कटी-फटी, अत्यधिक गंदी या अस्पष्ट है, तो मानवीय सत्यापन (Physical Verification) की सलाह दी जाती है। किसी भी विवाद में संस्थान का अंतिम भौतिक निर्णय मान्य होगा।
+      </p>
+    </div>
+
+    <div class="terms-card">
+      <h2>4. अनुचित उपयोग पर प्रतिबंध</h2>
+      <ul>
+        <li>सिस्टम पर अनधिकृत बॉट्स या ऑटोमेटेड स्क्रैपर्स चलाना प्रतिबंधित है।</li>
+        <li>रिवर्स इंजीनियरिंग या सिस्टम के सुरक्षा प्रोटोकॉल को तोड़ने का प्रयास पूर्णतः वर्जित है।</li>
+      </ul>
+    </div>
+
+    <div class="terms-card">
+      <h2>5. सेवा में संशोधन एवं विधिक अधिकार</h2>
+      <p>
+        NischayDesk बिना पूर्व सूचना के तकनीकी सुधारों के तहत सुविधाओं में बदलाव करने का अधिकार सुरक्षित रखता है। विवादों का निपटारा भारतीय न्याय क्षेत्र के अधीन होगा।
+      </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <a href="index.html" class="btn-back-home">⬅️ मुख्य OMR स्कैनर पर लौटें</a>
+    </div>
+  </div>
+
+  <footer style="margin-top: 40px; text-align: center; padding: 24px; font-size: 12px; color: #64748b; border-top: 1px solid var(--card-border, #e2e8f0);">
+    © 2026 NischayDesk. सर्वाधिकार सुरक्षित।
+  </footer>
+
+  <script src="theme_engine.js"></script>
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const loader = document.getElementById("pageLoader");
+        if (loader) {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.style.display = "none", 300);
+        }
+      }, 400);
+    });
+  </script>
+</body>
+</html>
