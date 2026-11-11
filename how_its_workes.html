@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>How It Works - Nischay OMR Pro AI Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 40px 18px 46px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: #e2e8f0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .content-body {
+      max-width: 860px;
+      margin: -20px auto 50px;
+      padding: 0 16px;
+    }
+    .step-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--card-border, #e2e8f0);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .step-badge {
+      width: 36px;
+      height: 36px;
+      background: #2563eb;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main, #0f172a);
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-muted, #475569);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .visual-box {
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: #1e40af;
+      font-weight: 700;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    body.dark-mode .visual-box {
+      background: #131b2e;
+      border-color: #334155;
+      color: #60a5fa;
+    }
+    .diagram-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .diagram-tag {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #334155;
+    }
+    body.dark-mode .diagram-tag {
+      background: #1e293b;
+      border-color: #475569;
+      color: #e2e8f0;
+    }
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e40af;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <nav class="top-navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        ⚡ Nischay OMR <span class="brand-badge">PRO v2.4</span>
+      </a>
+      <div class="nav-right-tools">
+        <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Theme</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <header class="page-header">
+    <h1>⚙️ Nischay AI Vision OMR कैसे काम करता है?</h1>
+    <p>पारंपरिक पिक्सेल कटिंग की कमियों को दूर करने वाला संपूर्ण 5-चरणीय न्यूरल स्कैनिंग आर्किटेक्चर</p>
+  </header>
+
+  <div class="content-body">
+
+    <!-- Step 1 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-badge">1</div>
+        <div class="step-title">रॉ इमेज इनपुट एवं 4-पॉइंट ऑटो-डेस्क्यू (Auto-Deskew)</div>
+      </div>
+      <div class="step-desc">
+        जब मोबाइल कैमरे से फोटो खींची जाती है, तो हाथ हिलने या झुकाव की वजह से शीट अक्सर 5° से 15° तिरछी हो जाती है। हमारा प्री-प्रोसेसिंग पाइपलाइन OMR शीट के चारों कोनों (Corner Alignment Markers) को स्वतः पहचानता है और पर्सपेक्टिव वार्प (Perspective Transform) लागू करके शीट को बिल्कुल 90° समतल डिजिटल ग्रिड में सीधा करता है।
+      </div>
+      <div class="visual-box">
+        <div>📐 ऑटो-अलाइनमेंट एवं ज्योमेट्रिक करेक्शन फ्लो</div>
+        <div class="diagram-row">
+          <span class="diagram-tag">रॉ मोबाइल फोटो</span>
+          <span>➔</span>
+          <span class="diagram-tag">कॉर्नर मार्कर डिटेक्शन</span>
+          <span>➔</span>
+          <span class="diagram-tag">90° डिजिटल अलाइनमेंट</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-badge">2</div>
+        <div class="step-title">हैंड-रिटन OCR द्वारा नाम व क्रमांक निष्कर्षण</div>
+      </div>
+      <div class="step-desc">
+        पारंपरिक स्कैनर केवल गोलों को पहचानते हैं, जिससे शिक्षकों को हर छात्र का नाम हाथ से टाइप करना पड़ता है। Nischay OMR Pro का न्यूरल OCR इंजन शीट के ऊपरी बक्से में पेन से लिखे गए <strong>CANDIDATE NAME</strong> और <strong>ROLL NUMBER</strong> को पहचानकर उसे डिजिटल टेक्स्ट रिकॉर्ड में मैप कर देता है।
+      </div>
+      <div class="visual-box">
+        <div>🔤 लिखावट पहचान (Handwriting to Text OCR)</div>
+        <div class="diagram-row">
+          <span class="diagram-tag">नाम बॉक्स (जैसे: PRINCE KUMAR)</span>
+          <span>➔</span>
+          <span class="diagram-tag">रोल नंबर (जैसे: 2608493105)</span>
+          <span>➔</span>
+          <span class="diagram-tag">मार्कशीट हेडर मैपिंग</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-badge">3</div>
+        <div class="step-title">मल्टी-मॉडल AI विज़न बबल डिकोडिंग</div>
+      </div>
+      <div class="step-desc">
+        साधारण OpenCV सिस्टम केवल काले पिक्सेलों की गिनती करता है, जिसके कारण परछाई या हल्के पेन के निशान गलत जाँचे जाते हैं। Nischay OMR का AI विज़न इंजन इंसानी आँख की तरह स्याही के फैलाव, बबल्स के कंट्रास्ट और छात्र के इरादे का विश्लेषण करता है:
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          <li><strong>एकल भरा गोला:</strong> विकल्प A, B, C या D के रूप में दर्ज।</li>
+          <li><strong>खाली गोला:</strong> प्रश्न को 'छोड़ा हुआ' (-) माना जाता है।</li>
+          <li><strong>दोहरे या गलत गोले:</strong> सिस्टम तुरंत उसे 'अमान्य' (INVALID) घोषित करता है।</li>
+        </ul>
+      </div>
+      <div class="visual-box">
+        <div>👁️ AI Vision Density Analysis</div>
+        <div class="diagram-row">
+          <span class="diagram-tag">कंट्रास्ट मैपिंग</span>
+          <span>➔</span>
+          <span class="diagram-tag">स्याही डेंसिटी चेक</span>
+          <span>➔</span>
+          <span class="diagram-tag">सटीक विकल्प चयन</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-badge">4</div>
+        <div class="step-title">मास्टर आंसर की मिलान एवं स्कोरिंग लॉजिक</div>
+      </div>
+      <div class="step-desc">
+        शिक्षक द्वारा सेट की गई मास्टर कुंजी से प्रत्येक प्रश्न का माइक्रोसेकंड में मिलान किया जाता है। कुल प्राप्तांक, सही उत्तर (+1), गलत उत्तर (0), अमान्य और छोड़े गए सवालों का प्रतिशत और विस्तृत प्रश्न-वार ब्रेकडाउन तुरंत तैयार होता है।
+      </div>
+      <div class="visual-box">
+        <div>⚡ रियल-टाइम स्कोरिंग इंजन</div>
+        <div class="diagram-row">
+          <span class="diagram-tag">छात्र उत्तर vs मास्टर की</span>
+          <span>➔</span>
+          <span class="diagram-tag">नेगेटिव मार्किंग (यदि लागू)</span>
+          <span>➔</span>
+          <span class="diagram-tag">कुल प्राप्तांक (जैसे 18/20)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-badge">5</div>
+        <div class="step-title">1-क्लिक क्लास एक्सेल एवं प्रिंटेबल PDF मार्कशीट</div>
+      </div>
+      <div class="step-desc">
+        मूल्यांकन समाप्त होते ही दो आधिकारिक दस्तावेज़ तैयार होते हैं:
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          <li><strong>क्लास स्प्रेडशीट (.xlsx):</strong> पूरी क्लास का समेकित रिकॉर्ड जिसमें नाम, रोल नंबर, रैंक और Q01 से Q100 के सभी रिस्पॉन्स शामिल होते हैं।</li>
+          <li><strong>छात्र PDF स्कोरकार्ड:</strong> A4 आकार का प्रिंट-रेडी प्रमाण पत्र जिसमें छात्र और परीक्षक के हस्ताक्षर की जगह होती है।</li>
+        </ul>
+      </div>
+      <div class="visual-box">
+        <div>📊 बहु-प्रारूप रिपोर्ट निर्यात</div>
+        <div class="diagram-row">
+          <span class="diagram-tag">openpyxl क्लास एक्सेल</span>
+          <span>➔</span>
+          <span class="diagram-tag">A4 प्रिंटेबल PDF मार्कशीट</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Link -->
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="index.html" class="btn-back-home">
+        ⬅️ मुख्य OMR स्कैनर कंसोल पर वापस जाएँ
+      </a>
+    </div>
+
+  </div>
+
+  <footer style="margin-top: 40px; text-align: center; padding: 24px; font-size: 12px; color: #64748b; border-top: 1px solid var(--card-border, #e2e8f0);">
+    © 2026 NischayDesk. ऑल राइट्स रिजर्व्ड।
+  </footer>
+
+  <script src="theme_engine.js"></script>
+</body>
+</html>
