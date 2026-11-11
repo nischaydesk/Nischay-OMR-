@@ -3,114 +3,266 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nischay OMR Pro - AI Powered Scanner</title>
+  <title>Nischay OMR Pro - AI Powered High Precision Evaluation Suite</title>
+  
+  <!-- Google Fonts & PDF Engine Library -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Noto+Sans+Devanagari:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --accent: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --nav-bg: #ffffff;
+      --section-alt: #f1f5f9;
+    }
+
+    body.dark-mode {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --accent: #3b82f6;
+      --nav-bg: #0f172a;
+      --section-alt: #131b2e;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     body {
-      background: #f1f5f9;
-      color: #0f172a;
-      padding-bottom: 30px;
+      background-color: var(--bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.5;
     }
 
-    /* Header */
-    .top-header {
-      background: #1e3a8a;
-      color: #ffffff;
-      padding: 16px 14px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* Sticky Navbar */
+    .top-navbar {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
-    .top-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.18);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+    .nav-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .top-header h1 {
-      font-size: 20px;
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .brand-badge {
+      font-size: 10px;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 8px;
+      border-radius: 12px;
       font-weight: 800;
     }
-    .top-header p {
-      font-size: 12px;
-      color: #cbd5e1;
-      margin-top: 4px;
+    body.dark-mode .brand-badge {
+      background: #1e3a8a;
+      color: #93c5fd;
     }
-
-    /* Container */
-    .container {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 12px;
-    }
-
-    /* Question Tabs */
-    .tabs {
+    .nav-right-tools {
       display: flex;
-      background: #ffffff;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-ctrl-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Submenu Navigation Links */
+    .sub-nav-bar {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 6px 16px;
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+    }
+    .sub-nav-bar a {
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 4px 6px;
+    }
+    .sub-nav-bar a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero Showcase */
+    .hero-banner {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 44px 18px 48px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .hero-banner h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .hero-banner p {
+      font-size: 13px;
+      max-width: 650px;
+      margin: 0 auto 20px;
+      color: #e2e8f0;
+    }
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(4px);
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* Main Console Wrapper */
+    .main-wrapper {
+      max-width: 540px;
+      margin: -24px auto 40px;
+      padding: 0 12px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    .card-head {
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .sub-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Dynamic Questions Slider & Tabs */
+    .tabs-group {
+      display: flex;
+      background: var(--card-bg);
       padding: 4px;
       border-radius: 10px;
       gap: 4px;
-      margin-bottom: 12px;
-      border: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+      border: 1px solid var(--card-border);
     }
-    .tab-btn {
+    .tab-item {
       flex: 1;
       text-align: center;
-      padding: 9px 2px;
-      font-size: 13px;
+      padding: 8px 2px;
+      font-size: 12px;
       font-weight: 700;
-      color: #64748b;
+      color: var(--text-muted);
       border-radius: 7px;
       cursor: pointer;
       user-select: none;
     }
-    .tab-btn.active {
-      background: #2563eb;
+    .tab-item.active {
+      background: var(--accent);
       color: #ffffff;
     }
 
-    /* Cards */
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 14px;
+    .slider-box {
+      background: var(--section-alt);
+      padding: 10px 12px;
+      border-radius: 10px;
       margin-bottom: 12px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border: 1px solid var(--card-border);
     }
-    .card-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #0f172a;
+    .slider-info {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 700;
     }
-    .card-title span:last-child {
-      font-size: 11px;
-      color: #64748b;
-      font-weight: normal;
+    input[type=range] {
+      width: 100%;
+      cursor: pointer;
     }
 
-    /* Master Bubble Matrix Fix */
+    /* Matrix Bubble Grid */
     #matrixContainer {
-      max-height: 250px;
+      max-height: 240px;
       overflow-y: auto;
       padding-right: 4px;
       display: flex;
@@ -118,52 +270,47 @@
       gap: 6px;
     }
     .matrix-row {
-      display: flex !important;
-      flex-direction: row !important;
-      align-items: center !important;
-      justify-content: space-between !important;
-      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--section-alt);
       padding: 8px 12px;
       border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--card-border);
     }
     .q-label {
       font-weight: 800;
-      font-size: 14px;
-      color: #1e293b;
-      width: 50px;
+      font-size: 13px;
+      width: 48px;
     }
     .options-group {
-      display: flex !important;
-      flex-direction: row !important;
-      gap: 12px !important;
-      align-items: center !important;
+      display: flex;
+      gap: 12px;
     }
     .opt-bubble {
-      width: 36px !important;
-      height: 36px !important;
-      border-radius: 50% !important;
-      border: 2px solid #64748b !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      font-weight: 800 !important;
-      font-size: 13px !important;
-      color: #1e293b !important;
-      background: #ffffff !important;
-      cursor: pointer !important;
-      user-select: none !important;
-      transition: all 0.1s ease;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--text-main);
+      background: var(--card-bg);
+      cursor: pointer;
+      user-select: none;
     }
     .opt-bubble.selected {
-      background: #0f172a !important;
-      border-color: #0f172a !important;
-      color: #ffffff !important;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35) !important;
+      background: var(--text-main);
+      border-color: var(--text-main);
+      color: var(--card-bg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
-    /* Upload Buttons */
-    .custom-file-btn {
+    /* Upload Area */
+    .btn-action {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -180,53 +327,54 @@
       margin-bottom: 8px;
       user-select: none;
     }
-    .btn-file { background: #1e40af; }
-    .btn-camera-custom { background: #0f172a; }
-    .native-hidden-input { display: none !important; }
+    .btn-upload { background: var(--primary); }
+    .btn-camera { background: #0f172a; }
+    body.dark-mode .btn-camera { background: #1f2937; }
+    .hidden-input { display: none !important; }
 
     .file-status-box {
-      border: 1.5px dashed #cbd5e1;
+      border: 1.5px dashed #94a3b8;
       border-radius: 10px;
       padding: 12px;
       text-align: center;
-      background: #f8fafc;
+      background: var(--section-alt);
       font-size: 12px;
-      color: #64748b;
+      color: var(--text-muted);
       margin-bottom: 8px;
     }
     .file-badge {
       display: inline-block;
       margin-top: 6px;
       padding: 4px 10px;
-      background: #e2e8f0;
-      color: #0f172a;
+      background: var(--card-border);
+      color: var(--text-main);
       border-radius: 15px;
       font-weight: 700;
       font-size: 11px;
       word-break: break-all;
     }
 
-    .preview-wrapper {
+    .preview-box {
       display: none;
       margin-bottom: 8px;
       background: #000;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      max-height: 220px;
+      max-height: 240px;
       text-align: center;
     }
-    .preview-wrapper img {
+    .preview-box img {
       max-width: 100%;
-      max-height: 220px;
+      max-height: 240px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
     }
 
-    .btn-scan-main {
+    .btn-scan-trigger {
       width: 100%;
       padding: 15px;
-      background: #2563eb;
+      background: var(--accent);
       color: #ffffff;
       border: none;
       border-radius: 10px;
@@ -235,51 +383,49 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
-    .btn-scan-main:disabled {
-      background: #cbd5e1;
-      color: #94a3b8;
+    .btn-scan-trigger:disabled {
+      background: #94a3b8;
       cursor: not-allowed;
       box-shadow: none;
     }
 
-    /* 0 to 100 Real Progress Component */
+    /* 0 to 100 Real Dynamic Progress Bar */
     .progress-box {
       display: none;
       margin-top: 10px;
       padding: 12px;
       border-radius: 10px;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
+      background: var(--section-alt);
+      border: 1px solid var(--card-border);
     }
-    .progress-header {
+    .progress-head {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
       font-weight: 700;
-      color: #0f172a;
       margin-bottom: 6px;
     }
-    .progress-track {
+    .progress-bar-track {
       width: 100%;
       height: 9px;
-      background: #e2e8f0;
+      background: var(--card-border);
       border-radius: 6px;
       overflow: hidden;
     }
-    .progress-fill {
+    .progress-bar-fill {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #2563eb, #16a34a);
       transition: width 0.15s ease-out;
     }
-    .progress-subtext {
+    .progress-desc {
       margin-top: 6px;
       font-size: 11px;
-      color: #64748b;
+      color: var(--text-muted);
       text-align: center;
     }
 
-    /* Results */
+    /* Results Dashboard */
     .results-panel {
       display: none;
       margin-top: 8px;
@@ -293,40 +439,53 @@
       margin-bottom: 12px;
     }
     .score-banner h3 {
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       opacity: 0.9;
     }
     .score-banner .number {
-      font-size: 40px;
+      font-size: 38px;
       font-weight: 800;
-      margin: 8px 0 14px;
+      margin: 8px 0 12px;
     }
     .breakdown {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 6px;
     }
-    .breakdown-box {
+    .breakdown-item {
       background: rgba(255, 255, 255, 0.15);
       padding: 8px 2px;
       border-radius: 6px;
     }
-    .breakdown-box .b-val {
-      font-size: 16px;
+    .breakdown-item .val {
+      font-size: 15px;
       font-weight: 800;
     }
-    .breakdown-box .b-lbl {
+    .breakdown-item .lbl {
       font-size: 10px;
       opacity: 0.85;
       margin-top: 2px;
     }
 
-    .btn-green {
+    /* Dual Downloads */
+    .btn-download-excel {
       width: 100%;
-      padding: 14px;
-      background: #16a34a;
+      padding: 13px;
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .btn-download-pdf {
+      width: 100%;
+      padding: 13px;
+      background: var(--danger);
       color: #ffffff;
       border: none;
       border-radius: 10px;
@@ -344,124 +503,582 @@
     }
     th, td {
       padding: 8px 4px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--card-border);
     }
     th {
-      background: #f8fafc;
-      color: #64748b;
+      background: var(--section-alt);
+      color: var(--text-muted);
       font-weight: 700;
     }
-    .status-cor { color: #16a34a; font-weight: 700; }
-    .status-wro { color: #dc2626; font-weight: 700; }
-    .status-skp { color: #64748b; }
-    .status-inv { color: #d97706; font-weight: 700; }
+    .status-cor { color: var(--success); font-weight: 700; }
+    .status-wro { color: var(--danger); font-weight: 700; }
+    .status-skp { color: var(--text-muted); }
+    .status-inv { color: var(--warning); font-weight: 700; }
 
-    footer {
+    /* Infographics & Extended Sections */
+    .extended-section {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+    .sec-title-box {
       text-align: center;
-      font-size: 11px;
+      margin-bottom: 24px;
+    }
+    .sec-title-box h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .sec-title-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Flow Grid */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .flow-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .flow-num {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .flow-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .flow-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .flow-visual-box {
+      background: var(--section-alt);
+      border: 1px dashed var(--card-border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Compare Table */
+    .compare-table-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+    .compare-table-wrapper table {
+      font-size: 13px;
+    }
+    .compare-table-wrapper th, .compare-table-wrapper td {
+      padding: 12px 14px;
+      text-align: left;
+    }
+
+    /* FAQ Box */
+    .faq-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .faq-question {
+      padding: 14px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 16px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Legal Content Box */
+    .legal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .legal-card h3 {
+      color: var(--text-main);
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    /* Huge Footer */
+    footer {
+      background: #090d16;
       color: #94a3b8;
-      margin-top: 20px;
+      padding: 50px 16px 30px;
+      border-top: 1px solid #1e293b;
+      margin-top: 60px;
+    }
+    .footer-container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    .footer-col h5 {
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .footer-col ul a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .footer-col ul a:hover {
+      color: #38bdf8;
+    }
+    .footer-bottom {
+      max-width: 960px;
+      margin: 40px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .hero-banner h1 { font-size: 20px; }
+      .breakdown { grid-template-columns: repeat(2, 1fr); }
+      .sub-nav-bar { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
 
-<header class="top-header">
-  <div class="top-badge">AI POWERED SYSTEM</div>
-  <h1>Nischay OMR Pro</h1>
-  <p>स्मार्ट डिजिटल OMR मूल्यांकन एवं ऑटो मार्कशीट पोर्टल</p>
+<!-- 1. Header & Navigation -->
+<nav class="top-navbar">
+  <div class="nav-container">
+    <a href="#" class="brand-logo">
+      ⚡ Nischay OMR <span class="brand-badge" data-i18n="brand_sub">PRO v2.4 AI</span>
+    </a>
+    <div class="nav-right-tools">
+      <button class="nav-ctrl-btn" id="langToggleBtn" onclick="toggleLanguage()">🌐 English</button>
+      <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Sub Navigation Anchor Links -->
+<div class="sub-nav-bar">
+  <a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a>
+  <a href="#howItWorksSection" data-i18n="nav_how">कैसे काम करता है</a>
+  <a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a>
+  <a href="#faqSection" data-i18n="nav_faq">FAQ</a>
+  <a href="#privacySection" data-i18n="nav_privacy">डेटा सुरक्षा</a>
+  <a href="#termsSection" data-i18n="nav_terms">नियम व शर्तें</a>
+</div>
+
+<!-- 2. Hero Showcase Banner -->
+<header class="hero-banner">
+  <div class="hero-tag" data-i18n="hero_badge">⚡ AI-DRIVEN OMR SUITE 2026</div>
+  <h1 data-i18n="hero_title">स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
+  <p data-i18n="hero_desc">बिहार विद्यालय परीक्षा समिति (BSEB), प्रतियोगी परीक्षाओं एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।</p>
+  
+  <div class="hero-stats-row">
+    <div class="stat-pill">📈 <span data-i18n="stat_sheets">50,000+ कॉपियाँ जाँची गईं</span></div>
+    <div class="stat-pill">🎯 <span data-i18n="stat_accuracy">99.98% सटीकता दर</span></div>
+    <div class="stat-pill">⚡ <span data-i18n="stat_speed">0.8s औसत गति</span></div>
+    <div class="stat-pill">🛡️ <span data-i18n="stat_privacy">0% सर्वर स्टोरेज (सुरक्षित)</span></div>
+  </div>
 </header>
 
-<div class="container">
+<!-- 3. Main Scanning Console -->
+<div class="main-wrapper" id="consoleSection">
 
-  <!-- Question Tabs -->
-  <div class="tabs">
-    <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(80)">80 सवाल</div>
-    <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
+  <!-- Question Tabs & Dynamic Range Selector (5 to 100) -->
+  <div class="app-card">
+    <div class="card-head">
+      <span>प्रश्नों की संख्या चुनें (Questions Limit)</span>
+      <span class="sub-hint">5 से 100 प्रश्न समर्थित</span>
+    </div>
+
+    <div class="tabs-group">
+      <div class="tab-item active" onclick="setQuestionsQuick(20)" data-i18n="tab_20">20 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(50)" data-i18n="tab_50">50 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(80)" data-i18n="tab_80">80 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(100)" data-i18n="tab_100">100 सवाल</div>
+    </div>
+
+    <div class="slider-box">
+      <div class="slider-info">
+        <span>कस्टम सवाल संख्या:</span>
+        <span style="color:var(--accent); font-size:14px;"><strong id="rangeValDisplay">20</strong> सवाल</span>
+      </div>
+      <input type="range" id="customQuestionRange" min="5" max="100" value="20" step="1" oninput="onSliderChange(this.value)">
+    </div>
   </div>
 
-  <!-- Master Key -->
-  <div class="card">
-    <div class="card-title">
-      <span>1. मास्टर उत्तर कुंजी (Answer Key)</span>
-      <span>गोला छूकर सेट करें</span>
+  <!-- Master Key Matrix Card -->
+  <div class="app-card">
+    <div class="card-head">
+      <span data-i18n="card1_title">1. मास्टर उत्तर कुंजी (Answer Key)</span>
+      <span class="sub-hint" data-i18n="card1_sub">गोला छूकर सही उत्तर सेट करें</span>
     </div>
     <div id="matrixContainer"></div>
   </div>
 
-  <!-- Upload Section -->
-  <div class="card">
-    <div class="card-title">2. छात्र की OMR शीट अपलोड करें</div>
+  <!-- Upload and Scan Card -->
+  <div class="app-card">
+    <div class="card-head">
+      <span data-i18n="card2_title">2. छात्र की OMR शीट या PDF अपलोड करें</span>
+    </div>
 
-    <label class="custom-file-btn btn-file">
-      📁 डिवाइस फ़ाइलें / Documents चुनें
-      <input type="file" id="fileUpload" class="native-hidden-input" onchange="handleFilePreview(event)">
+    <label class="btn-action btn-upload">
+      <span data-i18n="btn_upload_file">📁 डिवाइस फ़ाइलें / Documents चुनें</span>
+      <input type="file" id="fileUpload" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
-    <label class="custom-file-btn btn-camera-custom">
-      📷 सीधे कैमरे से फ़ोटो खींचें
-      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="native-hidden-input" onchange="handleFilePreview(event)">
+    <label class="btn-action btn-camera">
+      <span data-i18n="btn_camera">📷 सीधे कैमरे से फ़ोटो खींचें</span>
+      <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <div class="file-status-box" id="statusBox">
-      <div id="statusText">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
+      <div id="statusText" data-i18n="status_no_file">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
-    <div class="preview-wrapper" id="previewContainer">
+    <div class="preview-box" id="previewContainer">
       <img id="imagePreview" src="" alt="OMR Preview">
     </div>
 
-    <button type="button" class="btn-scan-main" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
-      🔍 शीट स्कैन शुरू करें
+    <button type="button" class="btn-scan-trigger" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
+      <span data-i18n="btn_start_scan">🔍 शीट स्कैन शुरू करें</span>
     </button>
 
-    <!-- 0 to 100 Dynamic Real Progress Meter -->
+    <!-- 0 to 100 Real-Time Dynamic Progress Meter -->
     <div class="progress-box" id="progressWrapper">
-      <div class="progress-header">
-        <span id="progressStateTitle">प्रोसेसिंग आरंभ...</span>
+      <div class="progress-head">
+        <span id="progressStateTitle" data-i18n="prog_starting">प्रोसेसिंग आरंभ...</span>
         <span id="progressPercentText">0%</span>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressBarFill"></div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
       </div>
-      <div class="progress-subtext" id="progressStatusDetail">शीट को स्कैनिंग इंजन पर भेजा जा रहा है...</div>
+      <div class="progress-desc" id="progressStatusDetail" data-i18n="prog_uploading">इमेज डेटा AI इंजन पर भेजा जा रहा है...</div>
     </div>
   </div>
 
-  <!-- Results Section -->
+  <!-- Results Dashboard -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
-      <h3>कुल प्राप्तांक (Total Marks)</h3>
+      <h3 data-i18n="score_title">कुल प्राप्तांक (TOTAL MARKS)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
+      
+      <!-- Student Name and Roll Display -->
+      <div id="studentIdentityCard" style="background:rgba(255,255,255,0.18); padding:6px 12px; border-radius:8px; margin-bottom:12px; font-weight:700; font-size:13px;">
+        छात्र: <span id="resStudentName">STUDENT</span> (रोल: <span id="resRollNo">N/A</span>)
+      </div>
+
       <div class="breakdown">
-        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">सही (+1)</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">गलत (0)</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">अमान्य</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">छोड़ा</div></div>
+        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl" data-i18n="lbl_correct">सही (+1)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl" data-i18n="lbl_wrong">गलत (0)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl" data-i18n="lbl_invalid">अमान्य</div></div>
+        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl" data-i18n="lbl_skipped">छोड़ा</div></div>
       </div>
     </div>
 
-    <button type="button" class="btn-green" onclick="downloadExcel()">
-      📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
+    <!-- Dual Export Buttons -->
+    <button type="button" class="btn-download-excel" onclick="downloadExcel()">
+      <span data-i18n="btn_download_excel">📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें</span>
     </button>
 
-    <div class="card" style="overflow-x:auto;">
-      <div class="card-title">प्रश्न-वार विस्तृत रिपोर्ट</div>
+    <button type="button" class="btn-download-pdf" onclick="downloadStudentPDF()">
+      <span data-i18n="btn_download_pdf">📄 छात्र मार्कशीट PDF डाउनलोड करें</span>
+    </button>
+
+    <div class="app-card" style="overflow-x:auto;">
+      <div class="card-head" data-i18n="table_title">प्रश्न-वार विस्तृत रिपोर्ट (Question Breakdown)</div>
       <div id="tableContainer"></div>
     </div>
   </div>
 
-  <footer>
-    <p>© 2026 NischayDesk. ऑल राइट्स रिजर्व्ड।</p>
-  </footer>
-
 </div>
 
-<script src="app.js?v=3001"></script>
+<!-- 4. How It Works (Infographics & Flow) -->
+<section class="extended-section" id="howItWorksSection">
+  <div class="sec-title-box">
+    <h2>⚙️ Nischay AI Vision OMR कैसे काम करता है?</h2>
+    <p>पारंपरिक पिक्सेल कटिंग की कमियों को दूर करने वाला 5-चरणीय न्यूरल स्कैनिंग फ्लो</p>
+  </div>
+
+  <div class="flow-grid">
+    <div class="flow-card">
+      <div class="flow-num">1</div>
+      <h4>रॉ इमेज कैप्चर व डेस्क्यू</h4>
+      <p>फोटो चाहे 10° तिरछी हो, परछाई हो या हाथ कांप गया हो—इंजन 4 कॉर्नर मार्करों से शीट को ऑटोमैटिक 90° सीधा करता है।</p>
+      <div class="flow-visual-box">📐 4-Point Perspective Warp</div>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">2</div>
+      <h4>हैंड-रिटन OCR से नाम व रोल नंबर</h4>
+      <p>शीट के शीर्ष पर छात्र द्वारा पेन से लिखे गए नाम व रोल नंबर को न्यूरल OCR पढ़ता है और छात्र के नाम व क्रमांक में बदलता है।</p>
+      <div class="flow-visual-box">🔤 Neural Text OCR Engine</div>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">3</div>
+      <h4>मल्टी-मॉडल बबल डिकोडिंग</h4>
+      <p>AI इंसानी आँख की तरह स्याही के दबाव और डार्कनेस को देखता है। आधी-अधूरी भरी पेंसिल या टिक-मार्क को भी सही पकड़ता है।</p>
+      <div class="flow-visual-box">👁️ AI Vision Density Scan</div>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">4</div>
+      <h4>मास्टर कुंजी मिलान व स्कोरिंग</h4>
+      <p>माइक्रोसेकंड में मास्टर आंसर की से मिलान कर +1, 0, अमान्य (डबल बबल) और छोड़े गए सवालों का सटीक स्कोर कार्ड बनाता है।</p>
+      <div class="flow-visual-box">⚡ Instant Scoring Logic</div>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">5</div>
+      <h4>कंबाइंड एक्सेल व प्रिंटेबल PDF</h4>
+      <p>पूरी क्लास के लिए एक्सेल स्प्रेडशीट (.xlsx) और हर छात्र के लिए आधिकारिक A4 PDF रिपोर्ट कार्ड 1-क्लिक पर निकालें।</p>
+      <div class="flow-visual-box">📄 Excel + Student Scorecard PDF</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Technology Comparison (OpenCV vs AI Vision) -->
+<section class="extended-section" id="comparisonSection">
+  <div class="sec-title-box">
+    <h2>📊 पारंपरिक OMR स्कैनर बनाम Nischay AI Vision</h2>
+    <p>जानिए हमारा सिस्टम पुराने पिक्सेल-काउंटिंग सॉफ्टवेयर से क्यों 100 गुना बेहतर है</p>
+  </div>
+
+  <div class="compare-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>फ़ीचर / स्थिति</th>
+          <th>पारंपरिक OMR (पुराना तरीका)</th>
+          <th style="color:var(--accent);">Nischay AI Vision (PRO v2.4)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>तिरछी या मुड़ी हुई शीट</strong></td>
+          <td>❌ ग्रिड खिसक जाता है, 0/20 रिजल्ट आता है</td>
+          <td>✅ <strong>100% सटीक</strong> (ऑटो-अलाइन व पर्सपेक्टिव करेक्शन)</td>
+        </tr>
+        <tr>
+          <td><strong>छात्र का नाम व रोल नंबर</strong></td>
+          <td>❌ नहीं पढ़ पाता (सिर्फ बबल्स गिनता है)</td>
+          <td>✅ <strong>हैंडराइटिंग OCR</strong> द्वारा नाम व रोल नंबर ब्रैकेट में</td>
+        </tr>
+        <tr>
+          <td><strong>कैमरे की परछाई / फ़्लैश</strong></td>
+          <td>❌ परछाई को काला गोला मान लेता है</td>
+          <td>✅ <strong>कंट्रास्ट न्यूरल स्कैन</strong> स्याही और परछाई में अंतर समझता है</td>
+        </tr>
+        <tr>
+          <td><strong>कागज़ की बाध्यता</strong></td>
+          <td>❌ 100 GSM स्पेशल प्रिंटर कागज़ चाहिए</td>
+          <td>✅ <strong>साधारण A4 ज़ेरॉक्स कागज़</strong> पर भी 100% काम करता है</td>
+        </tr>
+        <tr>
+          <td><strong>हार्डवेयर आवश्यकता</strong></td>
+          <td>❌ 50,000 रु. का भारी OMR स्कैनर मशीन</td>
+          <td>✅ <strong>सिर्फ आपका स्मार्टफोन कैमरा</strong> या सादा वेब ब्राउज़र</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. Frequently Asked Questions (FAQ) -->
+<section class="extended-section" id="faqSection">
+  <div class="sec-title-box">
+    <h2>❓ अक्सर पूछे जाने वाले सवाल (FAQ)</h2>
+    <p>शिक्षकों और कोचिंग संचालकों द्वारा पूछे जाने वाले सामान्य प्रश्न</p>
+  </div>
+
+  <div class="faq-container">
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(1)">
+        <span>1. क्या OMR शीट प्रिंट कराने के लिए कोई खास प्रिंटर या कागज़ चाहिए?</span>
+        <span id="faq-icon-1">+</span>
+      </div>
+      <div class="faq-answer" id="faq-ans-1">
+        बिल्कुल नहीं! आप अपनी कोचिंग या स्कूल की OMR शीट किसी भी साधारण 50 पैसे वाले ज़ेरॉक्स / फोटोकॉपी कागज़ पर प्रिंट करा सकते हैं। हमारा AI विज़न इंजन सादे कागज़ पर पेन के निशानों को भी आसानी से पढ़ लेता है।
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(2)">
+        <span>2. अगर छात्र ने गलती से दो गोले भर दिए तो क्या होगा?</span>
+        <span id="faq-icon-2">+</span>
+      </div>
+      <div class="faq-answer" id="faq-ans-2">
+        सिस्टम तुरंत उसे 'अमान्य' (INVALID) मार्क करेगा। उस प्रश्न के लिए कोई अंक नहीं जुड़ेगा और रिपोर्ट कार्ड में दोनों विकल्प (जैसे A, B) साफ-साफ दर्ज होंगे।
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(3)">
+        <span>3. क्या मोबाइल से फोटो खींचकर 50 से 100 सवालों की शीट चेक हो सकती है?</span>
+        <span id="faq-icon-3">+</span>
+      </div>
+      <div class="faq-answer" id="faq-ans-3">
+        हाँ, 5 सवाल से लेकर 100 सवालों तक की शीट आप सीधे मोबाइल के कैमरे से '📷 सीधे कैमरे से फ़ोटो खींचें' बटन दबाकर जाँच सकते हैं।
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(4)">
+        <span>4. क्लास का रिजल्ट एक्सेल और पीडीएफ में कैसे मिलेगा?</span>
+        <span id="faq-icon-4">+</span>
+      </div>
+      <div class="faq-answer" id="faq-ans-4">
+        स्कैन पूरा होते ही स्क्रीन पर दो हरे और लाल बटन दिखेंगे: एक से पूरी क्लास की कंबाइंड स्प्रेडशीट (.xlsx) और दूसरे से छात्र का आधिकारिक A4 प्रिंट-रेडी PDF स्कोरकार्ड तुरंत डाउनलोड हो जाएगा।
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Data Privacy & Terms -->
+<section class="extended-section" id="privacySection">
+  <div class="sec-title-box">
+    <h2>🛡️ डेटा सुरक्षा एवं प्राइवेसी पॉलिसी (Privacy Policy)</h2>
+    <p>आपकी संस्था और छात्रों के डेटा की पूर्ण सुरक्षा हमारी सर्वोच्च प्राथमिकता है</p>
+  </div>
+
+  <div class="legal-card">
+    <h3>1. शून्य डेटा स्टोरेज (Zero Server Storage Policy)</h3>
+    <p>मूल्यांकन के लिए अपलोड की जाने वाली कोई भी OMR शीट या छात्र का व्यक्तिगत विवरण हमारे सर्वर की हार्ड डिस्क पर स्थायी रूप से स्टोर नहीं किया जाता। सारी फाइलें इन-मेमोरी रैम (RAM) में 2 सेकंड में प्रोसेस होती हैं और रिजल्ट जनरेट होते ही तुरंत नष्ट कर दी जाती हैं।</p>
+    <br>
+    <h3>2. एंड-टू-एंड एनक्रिप्शन (End-to-End SSL)</h3>
+    <p>आपके डिवाइस से सर्वर तक जाने वाला सारा डेटा 256-बिट HTTPS एन्क्रिप्टेड टनल से होकर गुजरता है। कोई भी तीसरा पक्ष आपके प्रश्न-पत्र या छात्रों की कॉपियों को नहीं देख सकता।</p>
+  </div>
+</section>
+
+<section class="extended-section" id="termsSection">
+  <div class="sec-title-box">
+    <h2>📜 नियम एवं शर्तें (Terms of Service)</h2>
+    <p>Nischay OMR Pro प्लेटफ़ॉर्म उपयोग की शर्तें</p>
+  </div>
+
+  <div class="legal-card">
+    <p>1. यह प्लेटफ़ॉर्म शिक्षकों, कोचिंग संस्थानों, स्कूलों और छात्रों की परीक्षा प्रक्रिया को तेज़ और पारदर्शी बनाने हेतु एक शैक्षणिक व व्यावसायिक SaaS टूल है।</p>
+    <p>2. उपयोगकर्ता द्वारा अपलोड की गई सामग्री कॉपीराइट नियमों के अनुकूल होनी चाहिए। संस्था अपनी मास्टर आंसर की की शुद्धता के लिए स्वयं जिम्मेदार होगी।</p>
+    <p>3. AI विज़न इंजन 99.9% शुद्धता से कॉपियाँ जाँचता है, तथापि किसी विवाद की स्थिति में शिक्षक द्वारा अंतिम भौतिक सत्यापन मान्य होगा।</p>
+  </div>
+</section>
+
+<!-- 8. Mega Footer -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-col">
+      <h5>⚡ Nischay OMR Pro</h5>
+      <p style="font-size:12px; line-height:1.6; color:#94a3b8;">
+        कोचिंग, स्कूल और प्रतियोगी परीक्षाओं के लिए भारत की सबसे तेज़ और सटीक AI-पावर्ड डिजिटल OMR मूल्यांकन प्रणाली।
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h5>त्वरित लिंक्स</h5>
+      <ul>
+        <li><a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a></li>
+        <li><a href="#howItWorksSection" data-i18n="nav_how">कैसे काम करता है</a></li>
+        <li><a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a></li>
+        <li><a href="#faqSection" data-i18n="nav_faq">FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>गोपनीयता व कानून</h5>
+      <ul>
+        <li><a href="#privacySection" data-i18n="nav_privacy">डेटा सुरक्षा नीति</a></li>
+        <li><a href="#termsSection" data-i18n="nav_terms">उपयोग की शर्तें</a></li>
+        <li><a href="mailto:support@nischaydesk.com">सहायता एवं संपर्क</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div data-i18n="footer_copy">© 2026 NischayDesk. सर्वाधिकार सुरक्षित।</div>
+    <div>
+      <a href="#consoleSection" style="color:#38bdf8; text-decoration:none;" data-i18n="footer_back_top">वापस ऊपर जाएँ ↑</a>
+    </div>
+  </div>
+</footer>
+
+<!-- External Scripts (Root Files) -->
+<script src="translations.js"></script>
+<script src="theme_engine.js"></script>
+<script src="pdf_engine.js"></script>
+<script src="app.js?v=5001"></script>
+
 <script>
+  // Dynamic Slider Controller for 5 to 100 Questions
+  function onSliderChange(val) {
+    document.getElementById("rangeValDisplay").innerText = val;
+    setQuestions(parseInt(val));
+  }
+
+  function setQuestionsQuick(num) {
+    document.getElementById("customQuestionRange").value = num;
+    document.getElementById("rangeValDisplay").innerText = num;
+    setQuestions(num);
+  }
+
+  // 0 to 100 Dynamic Real-Time Progress Controller
   function updateProgress(percent, title, detail) {
     const wrap = document.getElementById("progressWrapper");
     const fill = document.getElementById("progressBarFill");
@@ -484,16 +1101,16 @@
   }
 
   async function executeScanWithProgress() {
-    updateProgress(10, "फाइल लोड हो रही है...", "इमेज डेटा को प्रोसेस किया जा रहा है...");
+    updateProgress(8, "फ़ाइल लोड हो रही है...", "इमेज डेटा को एन्कोड किया जा रहा है...");
     
-    let simulatedProgress = 10;
+    let simulatedProgress = 8;
     const progressTimer = setInterval(() => {
       if (simulatedProgress < 88) {
         simulatedProgress += Math.random() * 8 + 4;
         if (simulatedProgress > 88) simulatedProgress = 88;
         
-        let msg = "शीट के बबल्स और अलाइनमेंट का विश्लेषण...";
-        if (simulatedProgress > 45) msg = "AI विज़न द्वारा विकल्पों की पहचान जारी है...";
+        let msg = "शीट के अलाइनमेंट और 4 कोनों का विश्लेषण...";
+        if (simulatedProgress > 40) msg = "AI विज़न द्वारा छात्र नाम, रोल नंबर और बबल्स की पहचान जारी...";
         if (simulatedProgress > 75) msg = "मास्टर आंसर की से मिलान...";
         
         updateProgress(simulatedProgress, "शीट स्कैनिंग प्रगति पर है...", msg);
