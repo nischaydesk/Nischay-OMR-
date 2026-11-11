@@ -1,17 +1,14 @@
-// Render ka live backend URL
 const BACKEND_URL = "https://nischay-omr.onrender.com";
 
 let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
-// Default Answer Key (20 questions)
 let answerKey = {
   1:'B', 2:'A', 3:'C', 4:'B', 5:'C', 6:'D', 7:'A', 8:'C', 9:'B', 10:'D',
   11:'C', 12:'A', 13:'D', 14:'B', 15:'C', 16:'A', 17:'D', 18:'C', 19:'A', 20:'A'
 };
 
-// Master Answer Grid create karna
 function renderMatrix() {
   const container = document.getElementById("matrixContainer");
   if (!container) return;
@@ -37,13 +34,11 @@ function renderMatrix() {
   container.innerHTML = html;
 }
 
-// Option select karna
 function selectOption(q, opt) {
   answerKey[q] = opt;
   renderMatrix();
 }
 
-// Tab change karna (20, 50, 80, 100)
 function setQuestions(num) {
   questionCount = num;
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -58,7 +53,6 @@ function setQuestions(num) {
   renderMatrix();
 }
 
-// File choose hone par preview aur scan button activate karna
 function handleFilePreview(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -71,7 +65,7 @@ function handleFilePreview(e) {
   const previewImg = document.getElementById("imagePreview");
   const btnScan = document.getElementById("btnStartScan");
 
-  if (statusText) statusText.innerText = "Chuni Gayi OMR File:";
+  if (statusText) statusText.innerText = "चयनित OMR फ़ाइल:";
   if (fileNameDisplay) {
     fileNameDisplay.innerText = file.name;
     fileNameDisplay.style.display = "inline-block";
@@ -84,8 +78,6 @@ function handleFilePreview(e) {
       if (previewBox) previewBox.style.display = "block";
     };
     reader.readAsDataURL(file);
-  } else {
-    if (previewBox) previewBox.style.display = "none";
   }
 
   if (btnScan) {
@@ -95,10 +87,9 @@ function handleFilePreview(e) {
   }
 }
 
-// Scan request bhejna
 async function executeScan() {
   if (!selectedOmrFile) {
-    alert("Pehle OMR sheet ki file chunein ya photo kheenchein!");
+    alert("कृपया पहले OMR शीट की फ़ाइल चुनें!");
     return;
   }
 
@@ -126,7 +117,7 @@ async function executeScan() {
     if (btnScan) btnScan.disabled = false;
 
     if (!res.ok) {
-      alert("Error: " + (data.detail || "Sheet check karne me problem hui"));
+      alert("Error: " + (data.detail || "Sheet चेक करने में समस्या आई"));
       return;
     }
 
@@ -140,11 +131,10 @@ async function executeScan() {
   } catch (err) {
     if (loader) loader.style.display = "none";
     if (btnScan) btnScan.disabled = false;
-    alert("Server connect nahi hua. Render server ko shuru hone me 30 second lagte hain. Kripya thodi der ruk kar dobara 'Sheet Scan Karein' dabayein.");
+    alert("सर्वर कनेक्ट नहीं हुआ। Render सर्वर को शुरू होने में 30 सेकंड का समय लग सकता है।");
   }
 }
 
-// Result show karna
 function renderResults(data) {
   const s = data.summary;
   document.getElementById("scoreDisplay").innerText = `${s.score} / ${s.total_questions}`;
@@ -153,7 +143,7 @@ function renderResults(data) {
   document.getElementById("cntInv").innerText = s.invalid;
   document.getElementById("cntSkp").innerText = s.skipped;
 
-  let tbl = `<table><tr><th>Q.No</th><th>Student Mark</th><th>Correct Key</th><th>Status</th></tr>`;
+  let tbl = `<table><tr><th>Q.No</th><th>छात्र उत्तर</th><th>सही उत्तर</th><th>परिणाम</th></tr>`;
   data.details.forEach(row => {
     let cls = "status-skp";
     if (row.Status === "सही") cls = "status-cor";
@@ -175,10 +165,9 @@ function renderResults(data) {
   document.getElementById("resultsPanel").style.display = "block";
 }
 
-// Excel export
 async function downloadExcel() {
   if (!evaluationResult) {
-    alert("Pehle OMR sheet scan karein!");
+    alert("पहले OMR शीट स्कैन करें!");
     return;
   }
 
@@ -191,7 +180,7 @@ async function downloadExcel() {
       body: fd
     });
 
-    if (!res.ok) throw new Error("Excel generate nahi hua");
+    if (!res.ok) throw new Error("Excel फ़ाइल जनरेट नहीं हुई");
 
     const blob = await res.blob();
     const a = document.createElement("a");
@@ -201,11 +190,10 @@ async function downloadExcel() {
     a.click();
     a.remove();
   } catch (err) {
-    alert("Excel marksheet download karne me error aaya.");
+    alert("Excel मार्कशीट डाउनलोड करने में त्रुटि आई।");
   }
 }
 
-// Initial load
 window.addEventListener("DOMContentLoaded", () => {
   renderMatrix();
 });
