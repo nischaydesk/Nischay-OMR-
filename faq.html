@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Frequently Asked Questions - Nischay OMR Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Blue Loading Screen Animation */
+    #pageLoader {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    body.dark-mode #pageLoader {
+      background: #0b0f19;
+    }
+    .blue-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loader-text {
+      margin-top: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e40af;
+      letter-spacing: 0.5px;
+    }
+    body.dark-mode .loader-text {
+      color: #60a5fa;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
+      color: #ffffff;
+      padding: 40px 18px 46px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 13px;
+      color: #e2e8f0;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .content-body {
+      max-width: 860px;
+      margin: -20px auto 50px;
+      padding: 0 16px;
+    }
+    .faq-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--card-border, #e2e8f0);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .faq-q {
+      padding: 16px 18px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-main, #0f172a);
+      user-select: none;
+    }
+    .faq-q:hover {
+      background: var(--section-alt, #f8fafc);
+    }
+    .faq-a {
+      display: none;
+      padding: 0 18px 16px;
+      font-size: 13.5px;
+      color: var(--text-muted, #475569);
+      line-height: 1.8;
+      border-top: 1px solid var(--card-border, #e2e8f0);
+      padding-top: 12px;
+    }
+    .faq-icon {
+      font-size: 18px;
+      color: #2563eb;
+      font-weight: 800;
+    }
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e40af;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Blue Loader -->
+  <div id="pageLoader">
+    <div class="blue-spinner"></div>
+    <div class="loader-text">Nischay OMR Pro लोड हो रहा है...</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="top-navbar">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo">
+        ⚡ Nischay OMR <span class="brand-badge">PRO v2.4</span>
+      </a>
+      <div class="nav-right-tools">
+        <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Theme</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>❓ अक्सर पूछे जाने वाले सवाल (FAQ)</h1>
+    <p>Nischay OMR Pro के उपयोग, तकनीकी आवश्यकताओं और कार्यप्रणाली से जुड़े प्रमुख समाधान</p>
+  </header>
+
+  <div class="content-body">
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaqLocal(1)">
+        <span>1. क्या OMR शीट प्रिंट करने के लिए किसी भारी या स्पेशल कागज़ की ज़रूरत है?</span>
+        <span class="faq-icon" id="fi-1">+</span>
+      </div>
+      <div class="faq-a" id="fa-1">
+        बिल्कुल नहीं! आप अपनी कोचिंग या स्कूल की OMR शीट किसी भी साधारण फोटोकॉपी (70 या 75 GSM) कागज़ पर सामान्य लेज़र प्रिंटर या ज़ेरॉक्स मशीन से प्रिंट करा सकते हैं। हमारा न्यूरल विज़न इंजन सादे कागज़ पर भी 100% सटीकता से काम करता है।
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaqLocal(2)">
+        <span>2. क्या मोबाइल से खींची गई तिरछी या परछाई वाली फ़ोटो सही से चेक हो पाएगी?</span>
+        <span class="faq-icon" id="fi-2">+</span>
+      </div>
+      <div class="faq-a" id="fa-2">
+        हाँ, Nischay OMR Pro में 4-पॉइंट ऑटो-डेस्क्यू और पर्सपेक्टिव करेक्शन इंजन लगा है। अगर फ़ोटो थोड़ी तिरछी भी है, तो सिस्टम कोनों के मार्कर पहचानकर शीट को डिजिटल रूप से 90° सीधा कर लेता है और शैडो-फ़िल्टरिंग द्वारा परछाई को हटाकर सिर्फ़ भरे हुए गोले पहचानता है।
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaqLocal(3)">
+        <span>3. छात्र का नाम और रोल नंबर मार्कशीट में अपने-आप कैसे आता है?</span>
+        <span class="faq-icon" id="fi-3">+</span>
+      </div>
+      <div class="faq-a" id="fa-3">
+        हमारा AI मॉडल ओएमआर बबल्स के साथ-साथ शीट के ऊपरी हिस्से में लिखे CANDIDATE NAME और ROLL NUMBER को हैंड-रिटन OCR से पढ़ता है और उसे मार्कशीट व एक्सेल रिपोर्ट में दर्ज कर देता है।
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaqLocal(4)">
+        <span>4. अगर किसी छात्र ने एक ही सवाल में दो गोले भर दिए तो क्या होगा?</span>
+        <span class="faq-icon" id="fi-4">+</span>
+      </div>
+      <div class="faq-a" id="fa-4">
+        सिस्टम उसे तुरंत 'अमान्य' (INVALID) चिह्नित करेगा। उस प्रश्न के लिए 0 अंक दिया जाएगा और स्कोरकार्ड में भी स्पष्ट दिखेगा कि छात्र ने एक से अधिक विकल्प भरे थे।
+      </div>
+    </div>
+
+    <div class="faq-card">
+      <div class="faq-q" onclick="toggleFaqLocal(5)">
+        <span>5. क्या हम एक साथ 50 या 100 सवालों की परीक्षा ले सकते हैं?</span>
+        <span class="faq-icon" id="fi-5">+</span>
+      </div>
+      <div class="faq-a" id="fa-5">
+        जी हाँ! मुख्य स्कैनर कंसोल पर आप 5 से लेकर 100 सवालों तक की कोई भी संख्या स्लाइडर से चुन सकते हैं। मास्टर उत्तर कुंजी का ग्रिड अपने-आप उतने सवालों के लिए तैयार हो जाएगा।
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <a href="index.html" class="btn-back-home">⬅️ मुख्य OMR स्कैनर पर लौटें</a>
+    </div>
+
+  </div>
+
+  <footer style="margin-top: 40px; text-align: center; padding: 24px; font-size: 12px; color: #64748b; border-top: 1px solid var(--card-border, #e2e8f0);">
+    © 2026 NischayDesk. सर्वाधिकार सुरक्षित।
+  </footer>
+
+  <script src="theme_engine.js"></script>
+  <script>
+    function toggleFaqLocal(id) {
+      const a = document.getElementById("fa-" + id);
+      const icon = document.getElementById("fi-" + id);
+      if (a.style.display === "block") {
+        a.style.display = "none";
+        icon.innerText = "+";
+      } else {
+        a.style.display = "block";
+        icon.innerText = "−";
+      }
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const loader = document.getElementById("pageLoader");
+        if (loader) {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.style.display = "none", 300);
+        }
+      }, 400);
+    });
+  </script>
+</body>
+</html>
