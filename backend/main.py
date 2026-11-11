@@ -1,6 +1,6 @@
 import io
 import json
-import pandas as pd
+import openpyxl
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -43,11 +43,31 @@ async def scan_sheet(
 async def export_excel(payload: str = Form(...)):
     try:
         data = json.loads(payload)
-        df = pd.DataFrame(data["details"])
+        details = data.get("details", [])
+        
+        # openpyxl से सीधे एक्सेल वर्कबुक बनाना (बिना pandas के)
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "OMR_Result"
+        
+        # हेडर
+        headers = ["Question", "Student_Marked", "Answer_Key", "Status", "Marks"]
+        ws.append(headers)
+        
+        # डेटा पंक्तियाँ
+        for row in details:
+            ws.append([
+                row.get("Question", ""),
+                row.get("Student_Marked", ""),
+                row.get("Answer_Key", ""),
+                row.get("Status", ""),
+                row.get("Marks", 0.0)
+            ])
+            
         output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            df.to_excel(writer, index=False, sheet_name="Result")
+        wb.save(output)
         output.seek(0)
+        
         return StreamingResponse(
             output,
             headers={'Content-Disposition': 'attachment; filename="Nischay_OMR_Report.xlsx"'},
