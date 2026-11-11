@@ -1,15 +1,15 @@
-// Nischay OMR Pro - Core Application Controller
+// Nischay OMR Pro - Core Application Controller (High-Speed & Ultra-Precision Engine)
 const BACKEND_URL = "https://nischay-omr.onrender.com";
 
 let questionCount = 20;
 let selectedOmrFile = null;
 let evaluationResult = null;
 
-// मास्टर आंसर की खाली रखी गई है (कोई डिफ़ॉल्ट उत्तर नहीं)
+// मास्टर आंसर की खाली (कोई डिफ़ॉल्ट उत्तर नहीं)
 let answerKey = {};
 
 // ==========================================
-// 0. CUSTOM TOAST NOTIFICATION (No Default Alert)
+// 0. CUSTOM TOAST NOTIFICATION
 // ==========================================
 function showToast(message, type = "info") {
   let toast = document.getElementById("proToastNotification");
@@ -58,7 +58,62 @@ function showToast(message, type = "info") {
 }
 
 // ==========================================
-// 1. MASTER KEY MATRIX UI BUILDER (5 to 100 Q)
+// 1. HIGH-SPEED IMAGE OPTIMIZER (5s Scan Fix)
+// ==========================================
+async function compressImageForFastScan(file) {
+  // यदि फाइल PDF है तो उसे कंप्रेस न करें
+  if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.src = objectUrl;
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const canvas = document.createElement("canvas");
+      let width = img.width;
+      let height = img.height;
+
+      // अधिकतम 1200px रिज़ॉल्यूशन — AI विज़न के लिए सबसे उपयुक्त और सुपरफास्ट
+      const maxDim = 1200;
+      if (width > height && width > maxDim) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else if (height > maxDim) {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+
+      // कंट्रास्ट और शार्पनेस फ़िल्टर ताकि स्याही और छपे अक्षरों में कोई भ्रम न रहे
+      ctx.filter = "contrast(1.15) brightness(1.02)";
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // 0.85 क्वालिटी पर JPEG ब्लॉब (~250KB से 350KB साइज)
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          resolve(file);
+          return;
+        }
+        const fastFile = new File([blob], "fast_sheet.jpg", { type: "image/jpeg" });
+        resolve(fastFile);
+      }, "image/jpeg", 0.85);
+    };
+
+    img.onerror = () => {
+      resolve(file);
+    };
+  });
+}
+
+// ==========================================
+// 2. MASTER KEY MATRIX UI BUILDER (5 to 100 Q)
 // ==========================================
 function renderMatrix() {
   const container = document.getElementById("matrixContainer");
@@ -86,7 +141,6 @@ function renderMatrix() {
 }
 
 function selectOption(q, opt) {
-  // अगर वही विकल्प दोबारा दबाया जाए तो अनसेलेक्ट (खाली) हो जाएगा
   if (answerKey[q] === opt) {
     delete answerKey[q];
   } else {
@@ -95,7 +149,6 @@ function selectOption(q, opt) {
   renderMatrix();
 }
 
-// 5 से 100 तक डायनामिक सवाल सेट करने का फ़ंक्शन
 function setQuestions(num) {
   num = parseInt(num);
   if (isNaN(num) || num < 5) num = 5;
@@ -105,8 +158,8 @@ function setQuestions(num) {
 
   document.querySelectorAll('.tab-item').forEach(btn => {
     btn.classList.remove('active');
-    const text = btn.innerText;
-    if (text.includes(String(num))) {
+    const tabNum = parseInt(btn.getAttribute("data-q"));
+    if (tabNum === num) {
       btn.classList.add('active');
     }
   });
@@ -115,42 +168,7 @@ function setQuestions(num) {
 }
 
 // ==========================================
-// 2. FILE & CAMERA PREVIEW CONTROLLER
-// ==========================================
-function handleFilePreview(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  selectedOmrFile = file;
-
-  const statusText = document.getElementById("statusText");
-  const fileNameDisplay = document.getElementById("fileNameDisplay");
-  const previewBox = document.getElementById("previewContainer");
-  const previewImg = document.getElementById("imagePreview");
-  const btnScan = document.getElementById("btnStartScan");
-
-  if (statusText) statusText.innerText = "चयनित OMR फ़ाइल:";
-  if (fileNameDisplay) {
-    fileNameDisplay.innerText = file.name;
-    fileNameDisplay.style.display = "inline-block";
-  }
-
-  if (file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      if (previewImg) previewImg.src = evt.target.result;
-      if (previewBox) previewBox.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  }
-
-  if (btnScan) {
-    btnScan.disabled = false;
-  }
-}
-
-// ==========================================
-// 3. SCAN EXECUTION
+// 3. SCAN EXECUTION (LIGHTNING FAST)
 // ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
@@ -158,22 +176,21 @@ async function executeScan() {
     return;
   }
 
-  // जाँचना कि कम से कम कुछ सवालों की आंसर की सेट है या नहीं
   if (Object.keys(answerKey).length === 0) {
-    showToast("कृपया मास्टर आंसर की में कम से कम सही उत्तर सेट करें!", "warning");
+    showToast("कृपया मास्टर कुंजी में कम से कम सही उत्तर सेट करें!", "warning");
     return;
   }
 
+  const resPanel = document.getElementById("resultsPanel");
+  if (resPanel) resPanel.style.display = "none";
+
+  // फाइल को सुपरफास्ट और हाई-कंट्रास्ट मोड में तैयार करना
+  const fileToSend = await compressImageForFastScan(selectedOmrFile);
+
   const fd = new FormData();
-  fd.append("file", selectedOmrFile);
+  fd.append("file", fileToSend);
   fd.append("answer_key", JSON.stringify(answerKey));
   fd.append("total_q", questionCount);
-
-  const resPanel = document.getElementById("resultsPanel");
-  const btnScan = document.getElementById("btnStartScan");
-
-  if (resPanel) resPanel.style.display = "none";
-  if (btnScan) btnScan.disabled = true;
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/scan`, {
@@ -182,7 +199,6 @@ async function executeScan() {
     });
 
     const data = await res.json();
-    if (btnScan) btnScan.disabled = false;
 
     if (!res.ok) {
       const msg = data.detail || "शीट जाँचने में समस्या आई।";
@@ -199,7 +215,6 @@ async function executeScan() {
     }
 
   } catch (err) {
-    if (btnScan) btnScan.disabled = false;
     showToast("सर्वर प्रतिक्रिया में विलंब या त्रुटि। पुनः प्रयास करें।", "error");
     throw err;
   }
@@ -216,7 +231,9 @@ function renderResults(data) {
   if (nameEl) nameEl.innerText = data.student_name || "STUDENT";
   if (rollEl) rollEl.innerText = data.roll_no || "N/A";
 
-  document.getElementById("scoreDisplay").innerText = `${s.score} / ${s.total_questions}`;
+  const scoreEl = document.getElementById("scoreDisplay");
+  if (scoreEl) scoreEl.innerText = `${s.score} / ${s.total_questions}`;
+  
   document.getElementById("cntCor").innerText = s.correct;
   document.getElementById("cntWro").innerText = s.wrong;
   document.getElementById("cntInv").innerText = s.invalid;
