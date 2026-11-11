@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 
 def order_points(pts):
-    # 4 कोनों को सही क्रम में लगाना: top-left, top-right, bottom-right, bottom-left
     rect = np.zeros((4, 2), dtype="float32")
     s = pts.sum(axis=1)
     rect[0] = pts[np.argmin(s)]
@@ -14,7 +13,6 @@ def order_points(pts):
     return rect
 
 def four_point_transform(image, pts):
-    # फोटो को सीधा (Deskew/Warp) करना
     rect = order_points(pts)
     (tl, tr, br, bl) = rect
 
@@ -34,11 +32,7 @@ def four_point_transform(image, pts):
     ], dtype="float32")
 
     M = cv2.getPerspectiveTransform(rect, dst)
-    warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-    return warped
-
-def get_option_char(idx):
-    return ['A', 'B', 'C', 'D'][idx]
+    return cv2.warpPerspective(image, M, (maxWidth, maxHeight))
 
 def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20):
     nparr = np.frombuffer(image_bytes, np.uint8)
@@ -49,9 +43,8 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
     orig_h, orig_w = img.shape[:2]
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # 1. क्या यह बिहार बोर्ड वाली बड़ी 100 सवालों की ऑफिशियल शीट है?
+    # 1. यदि बड़ी BSEB शीट है (100 सवाल)
     if orig_h > 1400 and orig_w > 900:
-        # स्टैंडर्ड बिहार बोर्ड कोऑर्डिनेट्स
         th = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)[1]
         ROW_Y = [48.4, 79.6, 112.1, 145.7, 174.3, 205.0, 236.8, 267.3, 298.3, 329.8,
                  361.9, 393.9, 424.8, 455.9, 486.8, 519.4, 549.0, 579.3, 595.0, 609.8]
@@ -69,7 +62,7 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
 
             col_bubbles = []
             for i in range(1, num_labels):
-                if stats[i, cv2.CC_STAT_AREA] >= 110 and stats[i, cv2.CC_STAT_WIDTH] < 28 and stats[i, cv2.CC_STAT_HEIGHT] < 28:
+                if stats[i, cv2.CC_STAT_AREA] >= 100 and stats[i, cv2.CC_STAT_WIDTH] < 30 and stats[i, cv2.CC_STAT_HEIGHT] < 30:
                     col_bubbles.append((centroids[i][1], centroids[i][0]))
 
             for r_idx, ry in enumerate(ROW_Y):
@@ -114,79 +107,93 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
         }
         return {"summary": summary, "details": results}
 
-    # 2. यूनिवर्सल हैंडलर: कॉपी पर बने गोले, हाथ से खींची फोटो या छोटी शीट
-    # इमेज को स्टैंडर्ड 800x1000 में रीसाइज करना
-    resized = cv2.resize(gray, (800, 1000))
-    blurred = cv2.GaussianBlur(resized, (5, 5), 0)
-    thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    # 2. छोटी शीट या कस्टम शीट (20 प्रश्न / ऑटो-अलाइनमेंट मशीन मोड)
+    # ऑटो-कॉन्टूरिंग से शीट का टेबल बॉर्डर ढूँढना
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edged = cv2.Canny(blurred, 50, 200)
 
-    # गोलों के मुख्य एरिया (कंटेनर) का अनुमान
-    # ऊपर का 15% टाइटल छोड़ें, नीचे का 5% मार्जिन छोड़ें
-    roi = thresh[150:950, 40:760]
-    rh, rw = roi.shape
+    contours, _ = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    doc_cnt = None
+
+    if contours:
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)
+        for c in contours:
+            peri = cv2.arcLength(c, True)
+            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+            if len(approx) == 4:
+                doc_cnt = approx
+                break
+
+    if doc_cnt is not None:
+        warped = four_point_transform(gray, doc_cnt.reshape(4, 2))
+    else:
+        warped = gray
+
+    # स्टैण्डर्ड 800x600 ग्रिड में नॉर्मलाइज़ करना
+    warped = cv2.resize(warped, (800, 600))
+    th = cv2.threshold(warped, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+
+    # 20 प्रश्नों की शीट के दो कॉलम (बायाँ: Q1-10, दायाँ: Q11-20)
+    # हेडर और बॉटम बॉर्डर छोड़कर सिर्फ़ डेटा एरिया
+    data_area = th[110:570, :]
+    dh, dw = data_area.shape
+
+    cols = [
+        (int(dw * 0.12), int(dw * 0.48), 1, 10),
+        (int(dw * 0.54), int(dw * 0.90), 11, 20)
+    ]
 
     results = []
     correct, wrong, skipped, invalid = 0, 0, 0, 0
 
-    # क्या 20 सवाल 2 कॉलम में हैं (10-10) या 1 ही कॉलम में?
-    is_two_col = (total_questions > 10)
-    cols = 2 if is_two_col else 1
-    rows_per_col = int(np.ceil(total_questions / float(cols)))
+    for x1, x2, q_start, q_end in cols:
+        col_img = data_area[:, x1:x2]
+        ch, cw = col_img.shape
+        row_h = ch / 10.0
 
-    col_width = rw / float(cols)
-    row_height = rh / float(rows_per_col)
-
-    for c in range(cols):
-        for r in range(rows_per_col):
-            q_num = c * rows_per_col + (r + 1)
+        for r in range(10):
+            q_num = q_start + r
             if q_num > total_questions: break
 
-            # प्रश्न की पंक्ति काटना
-            y1 = int(r * row_height)
-            y2 = int((r + 1) * row_height)
-            x1 = int(c * col_width)
-            x2 = int((c + 1) * col_width)
+            ry1 = int(r * row_h)
+            ry2 = int((r + 1) * row_h)
+            row_box = col_img[ry1:ry2, :]
+            rb_h, rb_w = row_box.shape
 
-            q_roi = roi[y1:y2, x1:x2]
-            qh, qw = q_roi.shape
+            # दाएँ 80% में चार गोले (A, B, C, D)
+            options_box = row_box[:, int(rb_w * 0.20):]
+            _, ob_w = options_box.shape
+            opt_w = ob_w / 4.0
 
-            # सवाल नंबर के लेबल को छोड़कर सिर्फ 4 गोलों (A, B, C, D) का क्षेत्र
-            # आमतौर पर बाईं तरफ 25% में सवाल नंबर लिखा होता है
-            opt_area = q_roi[:, int(qw * 0.22):]
-            oh, ow = opt_area.shape
-            opt_step = ow / 4.0
+            scores = []
+            for opt_i in range(4):
+                bx1 = int(opt_i * opt_w + (opt_w * 0.10))
+                bx2 = int((opt_i + 1) * opt_w - (opt_w * 0.10))
+                by1 = int(rb_h * 0.15)
+                by2 = int(rb_h * 0.85)
 
-            bubble_scores = []
-            for opt_idx in range(4):
-                bx1 = int(opt_idx * opt_step + (opt_step * 0.15))
-                bx2 = int((opt_idx + 1) * opt_step - (opt_step * 0.15))
-                by1 = int(oh * 0.15)
-                by2 = int(oh * 0.85)
+                b_cell = options_box[by1:by2, bx1:bx2]
+                fill_ratio = (cv2.countNonZero(b_cell) / float(b_cell.size)) * 100
+                scores.append(fill_ratio)
 
-                b_crop = opt_area[by1:by2, bx1:bx2]
-                # भरे हुए पिक्सल (काली स्याही) की गिनती
-                fill_pixels = cv2.countNonZero(b_crop)
-                total_crop_pixels = b_crop.size if b_crop.size > 0 else 1
-                density = (fill_pixels / float(total_crop_pixels)) * 100
-                bubble_scores.append(density)
+            max_fill = max(scores)
+            avg_fill = sum(scores) / 4.0
 
-            # भरे हुए गोले का निर्धारण
-            max_val = max(bubble_scores)
-            avg_val = np.mean(bubble_scores)
-            
-            # अगर सबसे गहरा गोला बाकी गोलों से कम से कम 15% ज्यादा भरा हो और खुद 20% से ज्यादा भरा हो
-            filled_opts = [get_option_char(i) for i, sc in enumerate(bubble_scores) if sc > 25 and (sc - avg_val) > 8]
+            # अगर सबसे गहरा गोला 30% से अधिक भरा हो और बाकी औसत से 15% अधिक हो
+            marked_opts = []
+            for i, score in enumerate(scores):
+                if score > 35 and (score - avg_fill) > 12:
+                    marked_opts.append(['A', 'B', 'C', 'D'][i])
 
             key = answer_key.get(q_num, '-')
-
-            if len(filled_opts) == 0:
+            if len(marked_opts) == 0:
                 status, ans, mark = "छोड़ा हुआ", "-", 0.0
                 skipped += 1
-            elif len(filled_opts) > 1:
-                status, ans, mark = "अमान्य", ",".join(filled_opts), 0.0
+            elif len(marked_opts) > 1:
+                status, ans, mark = "अमान्य", ",".join(marked_opts), 0.0
                 invalid += 1
             else:
-                ans = filled_opts[0]
+                ans = marked_opts[0]
                 if ans == key:
                     status, mark = "सही", 1.0
                     correct += 1
@@ -211,5 +218,4 @@ def process_omr(image_bytes: bytes, answer_key: dict, total_questions: int = 20)
         "score": correct,
         "percentage": round((correct / len(results)) * 100, 1) if results else 0.0
     }
-
     return {"summary": summary, "details": results}
