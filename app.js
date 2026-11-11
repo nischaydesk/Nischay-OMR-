@@ -216,17 +216,17 @@ function setQuestions(num) {
 }
 
 // ==========================================
-// 4. SCAN EXECUTION
+// 4. SCAN EXECUTION (With 12s Hard Timeout)
 // ==========================================
 async function executeScan() {
   if (!selectedOmrFile) {
     showToast("कृपया पहले OMR शीट की फ़ाइल चुनें!", "warning");
-    return;
+    throw new Error("No file selected");
   }
 
   if (Object.keys(answerKey).length === 0) {
     showToast("कृपया मास्टर कुंजी में सही उत्तर सेट करें!", "warning");
-    return;
+    throw new Error("No answer key set");
   }
 
   const resPanel = document.getElementById("resultsPanel");
@@ -239,11 +239,18 @@ async function executeScan() {
   fd.append("answer_key", JSON.stringify(answerKey));
   fd.append("total_q", questionCount);
 
+  // 12-सेकंड का हार्ड टाइमआउट कंट्रोलर ताकि 5 मिनट तक पहिया न घूमे
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
+
   try {
     const res = await fetch(`${BACKEND_URL}/api/scan`, {
       method: "POST",
-      body: fd
+      body: fd,
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     const data = await res.json();
 
@@ -255,7 +262,7 @@ async function executeScan() {
 
     if (data.is_omr === false) {
       showTypewriterError(data.message || "यह OMR शीट नहीं है! कृपया वैध परीक्षा OMR उत्तर पत्रक अपलोड करें।");
-      return;
+      throw new Error("Invalid OMR document");
     }
 
     evaluationResult = data;
@@ -266,8 +273,15 @@ async function executeScan() {
       resPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    return data;
+
   } catch (err) {
-    showToast("सर्वर प्रतिक्रिया में त्रुटि। पुनः प्रयास करें।", "error");
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      showToast("सर्वर टाइमआउट (12s सीमा पार)! सर्वर व्यस्त है, पुनः प्रयास करें।", "error");
+    } else if (err.message !== "Invalid OMR document") {
+      showToast(err.message || "सर्वर प्रतिक्रिया में त्रुटि।", "error");
+    }
     throw err;
   }
 }
