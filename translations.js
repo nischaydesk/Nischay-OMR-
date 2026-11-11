@@ -2,83 +2,99 @@
 const i18nData = {
   hi: {
     brand_sub: "PRO v2.4 AI",
-    nav_scanner: "स्कैनर कंसोल",
-    nav_how: "कैसे काम करता है",
-    nav_compare: "AI vs पारंपरिक",
-    nav_faq: "FAQ",
-    nav_privacy: "डेटा सुरक्षा",
-    nav_terms: "नियम व शर्तें",
-    hero_badge: "⚡ AI-DRIVEN OMR SUITE 2026",
+    drawer_theme_title: "थीम मोड",
+    drawer_lang_title: "भाषा (Language)",
+    drawer_lang_btn: "🌐 English",
+    drawer_nav_heading: "मुख्य नेविगेशन",
+    drawer_nav_scanner: "स्कैनर कंसोल",
+    drawer_nav_how: "हाउ इट वर्क्स (OMR Flow)",
+    drawer_nav_help: "सहायता व नीतियां",
+    drawer_nav_faq: "FAQ प्रश्नोत्तरी",
+    drawer_nav_privacy: "डेटा सुरक्षा (Privacy)",
+    drawer_nav_terms: "नियम एवं शर्तें (Terms)",
+    sub_nav_scanner: "स्कैनर कंसोल",
+    sub_nav_how: "हाउ इट वर्क्स ↗",
+    sub_nav_faq: "FAQ ↗",
+    sub_nav_privacy: "डेटा सुरक्षा ↗",
+    sub_nav_terms: "नियम व शर्तें ↗",
+    hero_badge: "⚡ AI-DRIVEN HIGH SPEED SCANNER",
     hero_title: "स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली",
-    hero_desc: "बिहार विद्यालय परीक्षा समिति (BSEB), प्रतियोगी परीक्षाओं एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।",
-    stat_sheets: "50,000+ कॉपियाँ जाँची गईं",
-    stat_accuracy: "99.98% सटीकता दर",
-    stat_speed: "0.8s औसत गति",
-    stat_privacy: "0% सर्वर स्टोरेज (सुरक्षित)",
+    hero_desc: "बिहार विद्यालय परीक्षा समिति (BSEB) एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।",
+    q_limit_title: "प्रश्नों की संख्या चुनें (Questions Limit)",
+    q_limit_sub: "5 से 100 प्रश्न समर्थित",
     tab_20: "20 सवाल",
     tab_50: "50 सवाल",
     tab_80: "80 सवाल",
     tab_100: "100 सवाल",
+    custom_q_label: "कस्टम सवाल संख्या:",
+    q_unit: "सवाल",
     card1_title: "1. मास्टर उत्तर कुंजी (Answer Key)",
     card1_sub: "गोला छूकर सही उत्तर सेट करें",
-    card2_title: "2. छात्र की OMR शीट या PDF अपलोड करें",
+    card2_title: "2. छात्र की OMR शीट अपलोड करें",
     btn_upload_file: "📁 डिवाइस फ़ाइलें / Documents चुनें",
     btn_camera: "📷 सीधे कैमरे से फ़ोटो खींचें",
     status_no_file: "अभी तक कोई फ़ाइल नहीं चुनी गई",
+    status_file_selected: "चयनित OMR फ़ाइल:",
     btn_start_scan: "🔍 शीट स्कैन शुरू करें",
     prog_starting: "प्रोसेसिंग आरंभ...",
-    prog_uploading: "इमेज डेटा AI इंजन पर भेजा जा रहा है...",
-    prog_analyzing: "AI विज़न द्वारा बबल्स, नाम और रोल नंबर का विश्लेषण...",
-    prog_matching: "मास्टर कुंजी से मिलान जारी है...",
-    prog_success: "सफल! परिणाम तैयार है।",
+    prog_encoding: "इमेज डेटा तैयार किया जा रहा है...",
     score_title: "कुल प्राप्तांक (TOTAL MARKS)",
+    student_prefix: "छात्र:",
+    roll_prefix: "रोल:",
     lbl_correct: "सही (+1)",
     lbl_wrong: "गलत (0)",
     lbl_invalid: "अमान्य",
     lbl_skipped: "छोड़ा",
     btn_download_excel: "📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें",
     btn_download_pdf: "📄 छात्र मार्कशीट PDF डाउनलोड करें",
-    table_title: "प्रश्न-वार विस्तृत रिपोर्ट (Question Breakdown)",
-    th_qno: "प्रश्न सं.",
+    table_title: "प्रश्न-वार विस्तृत रिपोर्ट",
+    th_qno: "Q.No",
     th_student: "छात्र उत्तर",
     th_key: "सही उत्तर",
     th_status: "परिणाम",
-    th_marks: "अंक",
-    footer_copy: "© 2026 NischayDesk. सर्वाधिकार सुरक्षित।",
-    footer_back_top: "वापस ऊपर जाएँ ↑"
+    footer_copy: "© 2026 NischayDesk. सर्वाधिकार सुरक्षित।"
   },
   en: {
     brand_sub: "PRO v2.4 AI",
-    nav_scanner: "Scanner Console",
-    nav_how: "How It Works",
-    nav_compare: "AI vs OpenCV",
-    nav_faq: "FAQ",
-    nav_privacy: "Data Privacy",
-    nav_terms: "Terms of Service",
-    hero_badge: "⚡ AI-DRIVEN OMR SUITE 2026",
-    hero_title: "Smart Digital OMR Evaluation Suite",
-    hero_desc: "100% accurate AI Vision OMR checker designed for BSEB, competitive exams, schools and coaching institutes.",
-    stat_sheets: "50,000+ Sheets Evaluated",
-    stat_accuracy: "99.98% Accuracy Rate",
-    stat_speed: "0.8s Avg Scan Time",
-    stat_privacy: "0% Server Storage (Safe)",
+    drawer_theme_title: "Theme Mode",
+    drawer_lang_title: "Language",
+    drawer_lang_btn: "🌐 हिंदी",
+    drawer_nav_heading: "Main Navigation",
+    drawer_nav_scanner: "Scanner Console",
+    drawer_nav_how: "How It Works (OMR Flow)",
+    drawer_nav_help: "Help & Policies",
+    drawer_nav_faq: "FAQ Q&A",
+    drawer_nav_privacy: "Data Privacy",
+    drawer_nav_terms: "Terms of Service",
+    sub_nav_scanner: "Scanner Console",
+    sub_nav_how: "How It Works ↗",
+    sub_nav_faq: "FAQ ↗",
+    sub_nav_privacy: "Data Privacy ↗",
+    sub_nav_terms: "Terms ↗",
+    hero_badge: "⚡ AI-DRIVEN HIGH SPEED SCANNER",
+    hero_title: "Smart Digital OMR Evaluation System",
+    hero_desc: "100% accurate AI Vision OMR checker designed for BSEB, competitive exams & coaching institutes.",
+    q_limit_title: "Select Number of Questions",
+    q_limit_sub: "5 to 100 Questions Supported",
     tab_20: "20 Questions",
     tab_50: "50 Questions",
     tab_80: "80 Questions",
     tab_100: "100 Questions",
+    custom_q_label: "Custom Question Count:",
+    q_unit: "Questions",
     card1_title: "1. Master Answer Key",
     card1_sub: "Tap bubble to set correct answer",
-    card2_title: "2. Upload Student OMR Sheet or PDF",
+    card2_title: "2. Upload Student OMR Sheet",
     btn_upload_file: "📁 Choose Device Files / Documents",
     btn_camera: "📷 Capture Directly with Camera",
     status_no_file: "No file chosen yet",
+    status_file_selected: "Selected OMR File:",
     btn_start_scan: "🔍 Start OMR Scan",
     prog_starting: "Starting processing...",
-    prog_uploading: "Uploading image to AI Engine...",
-    prog_analyzing: "AI Vision analyzing bubbles, name & roll number...",
-    prog_matching: "Matching with Master Answer Key...",
-    prog_success: "Success! Evaluation completed.",
+    prog_encoding: "Encoding image data...",
     score_title: "TOTAL MARKS OBTAINED",
+    student_prefix: "Student:",
+    roll_prefix: "Roll:",
     lbl_correct: "Correct (+1)",
     lbl_wrong: "Wrong (0)",
     lbl_invalid: "Invalid",
@@ -90,9 +106,7 @@ const i18nData = {
     th_student: "Student Ans",
     th_key: "Correct Key",
     th_status: "Status",
-    th_marks: "Marks",
-    footer_copy: "© 2026 NischayDesk. All Rights Reserved.",
-    footer_back_top: "Back to Top ↑"
+    footer_copy: "© 2026 NischayDesk. All Rights Reserved."
   }
 };
 
@@ -106,6 +120,9 @@ function toggleLanguage() {
 
 function applyLanguage() {
   const dict = i18nData[currentLang];
+  if (!dict) return;
+
+  // सभी data-i18n वाले तत्वों का टेक्स्ट अपडेट करें
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     if (dict[key]) {
@@ -113,9 +130,16 @@ function applyLanguage() {
     }
   });
 
-  const langBtn = document.getElementById("langToggleBtn");
-  if (langBtn) {
-    langBtn.innerHTML = currentLang === "hi" ? "🌐 English" : "🌐 हिंदी";
+  // ड्रावर के अंदर वाले बटन का टेक्स्ट
+  const langSwitchBtn = document.getElementById("langSwitchBtn");
+  if (langSwitchBtn) {
+    langSwitchBtn.innerText = dict["drawer_lang_btn"];
+  }
+
+  // अगर कोई टॉप नेव बटन भी हो
+  const langToggleBtn = document.getElementById("langToggleBtn");
+  if (langToggleBtn) {
+    langToggleBtn.innerText = currentLang === "hi" ? "🌐 English" : "🌐 हिंदी";
   }
 }
 
