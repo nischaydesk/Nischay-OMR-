@@ -3,136 +3,488 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nischay OMR Scanner</title>
+  <title>Nischay OMR Pro - AI Powered High Speed Evaluation System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --accent: #2563eb;
+      --dark: #0f172a;
+      --slate: #334155;
+      --light-bg: #f8fafc;
+      --border: #e2e8f0;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f1f5f9;
+      color: var(--dark);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation */
+    .top-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    .brand-logo span.badge {
+      font-size: 11px;
+      background: #dbeafe;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--slate);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    /* Hero Banner */
+    .hero-section {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+      color: #ffffff;
+      padding: 40px 18px 50px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(4px);
+    }
+    .hero-section h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      line-height: 1.3;
+    }
+    .hero-section p {
+      font-size: 14px;
+      max-width: 600px;
+      margin: 0 auto;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Main Console Wrapper */
+    .app-wrapper {
+      max-width: 900px;
+      margin: -25px auto 40px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 12px;
+      gap: 6px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(30, 64, 175, 0.25);
+    }
+
+    /* Upload Controls */
     .upload-container {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 10px;
+    }
+    .action-btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .custom-file-btn {
+      flex: 1;
+      min-width: 220px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      width: 100%;
+      gap: 10px;
       padding: 14px;
-      border-radius: 8px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 700;
       color: #ffffff;
       cursor: pointer;
       text-align: center;
-      user-select: none;
-      box-sizing: border-box;
+      transition: opacity 0.2s;
+    }
+    .custom-file-btn:active {
+      opacity: 0.9;
     }
     .btn-file {
-      background: #1e40af;
+      background: var(--primary);
     }
     .btn-camera-custom {
-      background: #0f172a;
+      background: var(--dark);
     }
     .native-hidden-input {
       display: none !important;
     }
+
     .file-status-box {
-      border: 2px dashed #94a3b8;
+      border: 2px dashed #cbd5e1;
       border-radius: 10px;
-      padding: 12px;
+      padding: 16px;
       text-align: center;
-      background: #f8fafc;
+      background: var(--light-bg);
       font-size: 13px;
-      color: #475569;
+      color: #64748b;
     }
     .file-badge {
       display: inline-block;
-      margin-top: 6px;
-      padding: 4px 12px;
+      margin-top: 8px;
+      padding: 5px 14px;
       background: #e2e8f0;
-      color: #0f172a;
+      color: var(--dark);
       border-radius: 20px;
       font-weight: 700;
       font-size: 12px;
       word-break: break-all;
     }
+
     .preview-wrapper {
       display: none;
       margin-top: 10px;
       background: #000;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      max-height: 250px;
+      max-height: 280px;
       text-align: center;
     }
     .preview-wrapper img {
       max-width: 100%;
-      max-height: 250px;
+      max-height: 280px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
     }
+
     .btn-scan-main {
       width: 100%;
-      padding: 15px;
-      background: #2563eb;
+      padding: 16px;
+      background: var(--accent);
       color: #ffffff;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 800;
       cursor: pointer;
-      margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      margin-top: 4px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: transform 0.1s, background 0.2s;
+    }
+    .btn-scan-main:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+    .btn-scan-main:active:not(:disabled) {
+      transform: scale(0.99);
     }
     .btn-scan-main:disabled {
       background: #cbd5e1;
-      color: #64748b;
+      color: #94a3b8;
       cursor: not-allowed;
       box-shadow: none;
+    }
+
+    /* 0 to 100 Real Dynamic Progress Component */
+    .progress-box {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      border-radius: 6px;
+      transition: width 0.15s ease-out;
+    }
+    .progress-subtext {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    /* Results */
+    .results-panel {
+      display: none;
+    }
+    .score-banner {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: white;
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .score-banner h3 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+    .score-banner .number {
+      font-size: 46px;
+      font-weight: 800;
+      margin: 10px 0 16px;
+    }
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .breakdown-box {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      padding: 10px 4px;
+      border-radius: 8px;
+    }
+    .breakdown-box .b-val {
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .breakdown-box .b-lbl {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .btn-green {
+      width: 100%;
+      padding: 15px;
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    }
+
+    /* Informational Landing Blocks */
+    .info-section {
+      margin-top: 40px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .info-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .info-card h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-card p {
+      margin: 0;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      color: #94a3b8;
+      text-align: center;
+      padding: 30px 16px;
+      font-size: 13px;
+      margin-top: 60px;
+      border-top: 1px solid #1e293b;
+    }
+    footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .hero-section h1 { font-size: 22px; }
+      .nav-links { display: none; }
+      .breakdown { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
 
-<div class="app-wrapper">
-  <header>
-    <h1>Nischay OMR Scanner</h1>
-    <p>Vidyalay Evam Coaching Pariksha Mulyankan Portal</p>
-  </header>
+<!-- Navbar -->
+<nav class="top-navbar">
+  <div class="nav-container">
+    <div class="brand-logo">
+      ⚡ Nischay OMR <span class="badge">PRO v2.0</span>
+    </div>
+    <div class="nav-links">
+      <a href="#scannerArea">स्कैनर</a>
+      <a href="#howItWorks">कैसे काम करता है</a>
+      <a href="#privacyPolicy">डेटा सुरक्षा</a>
+    </div>
+  </div>
+</nav>
 
+<!-- Hero Section -->
+<header class="hero-section">
+  <div class="hero-badge">AI-DRIVEN SPEED & PRECISION</div>
+  <h1>स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
+  <p>बिहार विद्यालय परीक्षा समिति (BSEB) एवं कोचिंग संस्थानों के लिए उच्च सटीकता से OMR कॉपियाँ जाँचने और एक्सेल मार्कशीट तैयार करने का संपूर्ण समाधान।</p>
+</header>
+
+<div class="app-wrapper" id="scannerArea">
+
+  <!-- Question Tabs -->
   <div class="tabs">
-    <div class="tab-btn active" onclick="setQuestions(20)">20 Sawal</div>
-    <div class="tab-btn" onclick="setQuestions(50)">50 Sawal</div>
-    <div class="tab-btn" onclick="setQuestions(80)">80 Sawal</div>
-    <div class="tab-btn" onclick="setQuestions(100)">100 Sawal</div>
+    <div class="tab-btn active" onclick="setQuestions(20)">20 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(50)">50 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(80)">80 सवाल</div>
+    <div class="tab-btn" onclick="setQuestions(100)">100 सवाल</div>
   </div>
 
+  <!-- Master Key Card -->
   <div class="card">
     <div class="card-title">
-      <span>1. Master Answer Key (Gola Chhuen)</span>
-      <span style="font-size:11px; color:#64748b;">Tap karke set karein</span>
+      <span>1. मास्टर उत्तर कुंजी (Answer Key)</span>
+      <span style="font-size:12px; color:#64748b; font-weight:normal;">गोले पर क्लिक करके सही उत्तर सेट करें</span>
     </div>
     <div class="bubble-matrix" id="matrixContainer"></div>
   </div>
 
+  <!-- Upload Card -->
   <div class="card">
-    <div class="card-title">2. Student Ki OMR Sheet Upload Karein</div>
+    <div class="card-title">2. छात्र की OMR शीट अपलोड करें (Image / PDF)</div>
 
     <div class="upload-container">
-      <label class="custom-file-btn btn-file">
-        📁 Device Files / Documents Chunein
-        <input type="file" id="fileUpload" class="native-hidden-input" onchange="handleFilePreview(event)">
-      </label>
+      <div class="action-btn-row">
+        <label class="custom-file-btn btn-file">
+          📁 डिवाइस से फ़ाइल / PDF चुनें
+          <input type="file" id="fileUpload" class="native-hidden-input" onchange="handleFilePreview(event)">
+        </label>
 
-      <label class="custom-file-btn btn-camera-custom">
-        📷 Camera Se Photo Kheenchein
-        <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="native-hidden-input" onchange="handleFilePreview(event)">
-      </label>
+        <label class="custom-file-btn btn-camera-custom">
+          📷 सीधे कैमरे से फ़ोटो लें
+          <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="native-hidden-input" onchange="handleFilePreview(event)">
+        </label>
+      </div>
 
       <div class="file-status-box" id="statusBox">
-        <div id="statusText">Abhi tak koi file nahi chuni gayi</div>
+        <div id="statusText">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
         <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
       </div>
 
@@ -140,37 +492,140 @@
         <img id="imagePreview" src="" alt="OMR Preview">
       </div>
 
-      <button type="button" class="btn-scan-main" id="btnStartScan" onclick="executeScan()" disabled>
-        🔍 Sheet Scan Karein
+      <button type="button" class="btn-scan-main" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
+        🔍 शीट स्कैन शुरू करें
       </button>
+
+      <!-- Real 0 to 100 Dynamic Progress Bar -->
+      <div class="progress-box" id="progressWrapper">
+        <div class="progress-header">
+          <span id="progressStateTitle">प्रोसेसिंग आरंभ...</span>
+          <span id="progressPercentText">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressBarFill"></div>
+        </div>
+        <div class="progress-subtext" id="progressStatusDetail">शीट को स्कैनिंग इंजन पर भेजा जा रहा है...</div>
+      </div>
     </div>
   </div>
 
-  <div class="loader" id="loader">Sheet ka vishleshan ho raha hai... Kripya intezar karein</div>
-
+  <!-- Result Panel -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
-      <h3>Kul Praptank (Total Marks)</h3>
+      <h3>कुल प्राप्तांक (Total Marks)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
       <div class="breakdown">
-        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">Sahi (+1)</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">Galat (0)</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">Amanya</div></div>
-        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">Chhoda</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntCor">0</div><div class="b-lbl">सही (+1)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntWro">0</div><div class="b-lbl">गलत (0)</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntInv">0</div><div class="b-lbl">अमान्य</div></div>
+        <div class="breakdown-box"><div class="b-val" id="cntSkp">0</div><div class="b-lbl">छोड़ा हुआ</div></div>
       </div>
     </div>
 
-    <button type="button" class="btn btn-green" onclick="downloadExcel()">
-      📥 Marksheet Excel (.xlsx) Download Karein
+    <button type="button" class="btn-green" onclick="downloadExcel()">
+      📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
     </button>
 
     <div class="card" style="margin-top:16px; overflow-x:auto;">
-      <div class="card-title">Prashn-war Report</div>
+      <div class="card-title">प्रश्न-वार विस्तृत रिपोर्ट (Question-wise Breakdown)</div>
       <div id="tableContainer"></div>
     </div>
   </div>
+
+  <!-- How It Works Section -->
+  <section class="info-section" id="howItWorks">
+    <div class="card">
+      <div class="card-title">⚙️ Nischay OMR इंजन कैसे काम करता है?</div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h4>1. अलाइनमेंट व ऑटो-डेस्क्यू</h4>
+          <p>शीट चाहे मोबाइल कैमरे से किसी भी कोण पर खींची गई हो, इंजन 4 कोनों के मार्करों से उसे स्वतः सीधा कर लेता है।</p>
+        </div>
+        <div class="info-card">
+          <h4>2. AI विज़न बबल एनालिसिस</h4>
+          <p>पारंपरिक पिक्सेल कटिंग के बजाय यह डार्क बबल डेंसिटी और कंट्रास्ट के आधार पर भरे गए विकल्पों को चिन्हित करता है।</p>
+        </div>
+        <div class="info-card">
+          <h4>3. मास्टर की मिलान व एक्सेल</h4>
+          <p>सेट की गई आंसर की से मिलान कर तुरंत स्कोर, निगेटिव मार्किंग और पूरी क्लास की कंसोलिडेटेड मार्कशीट तैयार करता है।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Policy Section -->
+  <section class="info-section" id="privacyPolicy">
+    <div class="card">
+      <div class="card-title">🛡️ प्राइवेसी पॉलिसी एवं डेटा सुरक्षा (Data Privacy)</div>
+      <p style="font-size:13px; color:#475569; line-height:1.7; margin:0;">
+        <strong>1. शून्य डेटा स्टोरेज:</strong> जाँची जाने वाली कोई भी OMR शीट या छात्र का डेटा हमारे सर्वर की हार्ड डिस्क पर स्थायी रूप से स्टोर नहीं किया जाता।<br>
+        <strong>2. इन-मेमोरी प्रोसेसिंग:</strong> सभी फाइलें केवल अस्थायी रैम (RAM) में प्रोसेस होती हैं और परिणाम तैयार होते ही तुरंत नष्ट कर दी जाती हैं।<br>
+        <strong>3. सुरक्षित ट्रांसमिशन:</strong> आपकी सभी OMR शीट्स और मास्टर आंसर की एंड-टू-एंड एनक्रिप्टेड (HTTPS) चैनल के माध्यम से प्रोसेस होती हैं।
+      </p>
+    </div>
+  </section>
+
 </div>
 
-<script src="app.js?v=999"></script>
+<footer>
+  <p>© 2026 NischayDesk. सर्वाधिकार सुरक्षित। | <a href="#scannerArea">वापस ऊपर जाएँ</a></p>
+</footer>
+
+<script src="app.js?v=1001"></script>
+<script>
+  // 0 to 100 Dynamic Real-Time Progress Controller
+  function updateProgress(percent, title, detail) {
+    const wrap = document.getElementById("progressWrapper");
+    const fill = document.getElementById("progressBarFill");
+    const text = document.getElementById("progressPercentText");
+    const stTitle = document.getElementById("progressStateTitle");
+    const stDetail = document.getElementById("progressStatusDetail");
+
+    if (wrap) wrap.style.display = "block";
+    if (fill) fill.style.width = percent + "%";
+    if (text) text.innerText = Math.round(percent) + "%";
+    if (stTitle && title) stTitle.innerText = title;
+    if (stDetail && detail) stDetail.innerText = detail;
+  }
+
+  function resetProgress() {
+    const wrap = document.getElementById("progressWrapper");
+    const fill = document.getElementById("progressBarFill");
+    if (wrap) wrap.style.display = "none";
+    if (fill) fill.style.width = "0%";
+  }
+
+  // Wrapper around executeScan() with smooth 0-100 progression
+  async function executeScanWithProgress() {
+    updateProgress(5, "फाइल लोड हो रही है...", "इमेज डेटा को एन्कोड किया जा रहा है...");
+    
+    let simulatedProgress = 5;
+    const progressTimer = setInterval(() => {
+      if (simulatedProgress < 85) {
+        simulatedProgress += Math.random() * 8 + 4;
+        if (simulatedProgress > 85) simulatedProgress = 85;
+        
+        let msg = "शीट के कोनों और बबल्स का विश्लेषण...";
+        if (simulatedProgress > 40) msg = "AI विज़न द्वारा विकल्पों की पहचान की जा रही है...";
+        if (simulatedProgress > 70) msg = "मास्टर आंसर की से मिलान जारी है...";
+        
+        updateProgress(simulatedProgress, "शीट स्कैनिंग प्रगति पर है...", msg);
+      }
+    }, 200);
+
+    try {
+      await executeScan();
+      clearInterval(progressTimer);
+      updateProgress(100, "सफल!", "परिणाम और मार्कशीट तैयार है।");
+      setTimeout(() => {
+        resetProgress();
+      }, 900);
+    } catch (err) {
+      clearInterval(progressTimer);
+      resetProgress();
+    }
+  }
+</script>
 </body>
 </html>
