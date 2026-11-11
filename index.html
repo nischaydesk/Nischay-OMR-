@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nischay OMR Pro - AI Powered High Precision Evaluation Suite</title>
+  <title>Nischay OMR Pro - AI Evaluation Console</title>
   
-  <!-- Google Fonts & PDF Engine Library -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -13,14 +12,31 @@
 
   <style>
     :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.35);
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --nav-bg: #0b0f19;
+      --section-alt: #161f30;
+      --overlay-bg: rgba(0, 0, 0, 0.75);
+    }
+
+    body.light-mode {
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --primary: #1e40af;
-      --primary-hover: #1d4ed8;
       --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.15);
       --success: #16a34a;
       --danger: #dc2626;
       --warning: #d97706;
@@ -29,27 +45,13 @@
       --overlay-bg: rgba(15, 23, 42, 0.6);
     }
 
-    body.dark-mode {
-      --bg: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f2937;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #3b82f6;
-      --primary-hover: #60a5fa;
-      --accent: #3b82f6;
-      --nav-bg: #0f172a;
-      --section-alt: #131b2e;
-      --overlay-bg: rgba(0, 0, 0, 0.75);
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
       -webkit-tap-highlight-color: transparent;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      outline: none;
     }
 
     body {
@@ -57,24 +59,30 @@
       color: var(--text-main);
       overflow-x: hidden;
       line-height: 1.5;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* Sticky Navbar */
+    /* Top Sticky Header - Super Clean (No Outer Buttons) */
     .top-navbar {
       background: var(--nav-bg);
       border-bottom: 1px solid var(--card-border);
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      backdrop-filter: blur(8px);
     }
     .nav-container {
-      max-width: 1080px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 10px 16px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     .brand-logo {
       display: flex;
@@ -82,26 +90,32 @@
       gap: 8px;
       font-weight: 800;
       font-size: 18px;
-      color: var(--primary);
+      color: var(--text-main);
       text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+    .brand-logo span.bolt {
+      color: #eab308;
     }
     .brand-badge {
       font-size: 10px;
-      background: #dbeafe;
-      color: #1e40af;
-      padding: 2px 8px;
-      border-radius: 12px;
+      background: #1e293b;
+      color: #60a5fa;
+      border: 1px solid #334155;
+      padding: 3px 8px;
+      border-radius: 20px;
       font-weight: 800;
     }
-    body.dark-mode .brand-badge {
-      background: #1e3a8a;
-      color: #93c5fd;
+    body.light-mode .brand-badge {
+      background: #dbeafe;
+      color: #1e40af;
+      border-color: #bfdbfe;
     }
 
-    /* Real 3-Line Hamburger Button */
+    /* Modern 3-Line Hamburger Button */
     .hamburger-btn {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -109,26 +123,30 @@
       gap: 5px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      padding: 8px;
+      padding: 9px;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .hamburger-btn:active {
+      transform: scale(0.92);
     }
     .hamburger-btn span {
       display: block;
       width: 22px;
-      height: 2.5px;
+      height: 2.2px;
       background: var(--text-main);
       border-radius: 2px;
       transition: transform 0.25s ease, opacity 0.25s ease;
     }
     .hamburger-btn.active span:nth-child(1) {
-      transform: translateY(7.5px) rotate(45deg);
+      transform: translateY(7px) rotate(45deg);
     }
     .hamburger-btn.active span:nth-child(2) {
       opacity: 0;
     }
     .hamburger-btn.active span:nth-child(3) {
-      transform: translateY(-7.5px) rotate(-45deg);
+      transform: translateY(-7px) rotate(-45deg);
     }
 
     /* Backdrop Overlay */
@@ -139,8 +157,8 @@
       z-index: 1050;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-      backdrop-filter: blur(2px);
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      backdrop-filter: blur(3px);
     }
     .menu-overlay.open {
       opacity: 1;
@@ -152,22 +170,22 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 285px;
+      width: 300px;
       height: 100%;
       background: var(--card-bg);
       border-right: 1px solid var(--card-border);
       z-index: 1100;
       transform: translateX(-100%);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.5);
     }
     .nav-drawer.open {
       transform: translateX(0);
     }
     .drawer-header {
-      padding: 16px;
+      padding: 18px 16px;
       border-bottom: 1px solid var(--card-border);
       display: flex;
       align-items: center;
@@ -176,19 +194,23 @@
     .drawer-title {
       font-size: 16px;
       font-weight: 800;
-      color: var(--primary);
+      color: var(--text-main);
     }
     .drawer-close {
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
+      background: var(--section-alt);
+      border: 1px solid var(--card-border);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       color: var(--text-muted);
-      line-height: 1;
-      padding: 4px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .drawer-body {
-      padding: 14px 12px;
+      padding: 16px 12px;
       flex: 1;
       overflow-y: auto;
       display: flex;
@@ -199,65 +221,73 @@
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
-      padding: 8px 10px 4px;
-      margin-top: 6px;
+      padding: 10px 10px 4px;
     }
     .drawer-link {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 13.5px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text-main);
       text-decoration: none;
       transition: background 0.15s ease, color 0.15s ease;
     }
-    .drawer-link:hover, .drawer-link:active {
+    .drawer-link:active, .drawer-link:hover {
       background: var(--section-alt);
-      color: var(--accent);
+      color: var(--primary);
     }
     .drawer-link .icon {
-      font-size: 16px;
-      width: 22px;
+      font-size: 17px;
+      width: 24px;
       text-align: center;
     }
-    .drawer-footer {
-      padding: 14px;
-      border-top: 1px solid var(--card-border);
+
+    /* Drawer Quick Switches (Language & Dark Mode Inside Drawer) */
+    .drawer-quick-controls {
+      background: var(--section-alt);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px 4px 6px;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
-    .drawer-btn {
-      width: 100%;
-      padding: 9px 12px;
+    .drawer-ctrl-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px;
+    }
+    .drawer-ctrl-row span {
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .switch-btn {
+      padding: 7px 14px;
       border-radius: 8px;
       border: 1px solid var(--card-border);
-      background: var(--section-alt);
+      background: var(--card-bg);
       color: var(--text-main);
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
-    /* Submenu Navigation Links */
+    /* Quick Horizontal Sub-bar */
     .sub-nav-bar {
-      background: var(--card-bg);
+      background: var(--nav-bg);
       border-bottom: 1px solid var(--card-border);
       overflow-x: auto;
       white-space: nowrap;
       padding: 8px 16px;
       display: flex;
-      gap: 14px;
-      justify-content: center;
+      gap: 10px;
       scrollbar-width: none;
     }
     .sub-nav-bar::-webkit-scrollbar {
@@ -268,79 +298,61 @@
       font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
-      padding: 4px 6px;
+      padding: 5px 10px;
       border-radius: 6px;
-    }
-    .sub-nav-bar a:hover {
-      color: var(--accent);
       background: var(--section-alt);
+      border: 1px solid var(--card-border);
     }
 
-    /* Hero Showcase */
+    /* Minimalist High-End Hero (No Dummy Numbers) */
     .hero-banner {
-      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #2563eb 100%);
-      color: #ffffff;
-      padding: 44px 18px 48px;
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, rgba(0, 0, 0, 0) 100%);
+      padding: 28px 16px 20px;
       text-align: center;
     }
     .hero-tag {
-      display: inline-block;
-      padding: 4px 14px;
-      background: rgba(255,255,255,0.18);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.3);
       border-radius: 30px;
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
+      color: #60a5fa;
+      margin-bottom: 10px;
     }
     .hero-banner h1 {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
-      margin-bottom: 10px;
-      line-height: 1.3;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
     }
     .hero-banner p {
       font-size: 13px;
-      max-width: 650px;
-      margin: 0 auto 20px;
-      color: #e2e8f0;
-    }
-    .hero-stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      max-width: 720px;
+      max-width: 520px;
       margin: 0 auto;
-    }
-    .stat-pill {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(4px);
-      padding: 10px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text-muted);
     }
 
-    /* Main Console Wrapper */
+    /* Main Console Layout */
     .main-wrapper {
-      max-width: 540px;
-      margin: -24px auto 40px;
-      padding: 0 12px;
-      position: relative;
-      z-index: 10;
+      max-width: 500px;
+      margin: 0 auto 50px;
+      padding: 0 14px;
     }
 
     .app-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     .card-head {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
       display: flex;
       justify-content: space-between;
@@ -350,59 +362,75 @@
     .sub-hint {
       font-size: 11px;
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: normal;
     }
 
-    /* Dynamic Questions Slider & Tabs */
+    /* Custom Non-Default Segmented Tabs */
     .tabs-group {
       display: flex;
-      background: var(--card-bg);
+      background: var(--section-alt);
       padding: 4px;
-      border-radius: 10px;
+      border-radius: 12px;
       gap: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       border: 1px solid var(--card-border);
     }
     .tab-item {
       flex: 1;
       text-align: center;
-      padding: 8px 2px;
-      font-size: 12px;
+      padding: 10px 2px;
+      font-size: 12.5px;
       font-weight: 700;
       color: var(--text-muted);
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
       user-select: none;
+      transition: all 0.15s ease;
     }
     .tab-item.active {
       background: var(--accent);
       color: #ffffff;
+      box-shadow: 0 2px 10px var(--accent-glow);
     }
 
+    /* Pro Custom Slider */
     .slider-box {
       background: var(--section-alt);
-      padding: 10px 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       border: 1px solid var(--card-border);
     }
     .slider-info {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
     }
     input[type=range] {
+      -webkit-appearance: none;
       width: 100%;
+      height: 6px;
+      background: var(--card-border);
+      border-radius: 5px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
       cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-glow);
+      border: 2px solid #ffffff;
     }
 
-    /* Matrix Bubble Grid */
+    /* Precision Matrix Grid */
     #matrixContainer {
-      max-height: 240px;
+      max-height: 250px;
       overflow-y: auto;
       padding-right: 4px;
       display: flex;
@@ -410,54 +438,62 @@
       gap: 6px;
     }
     .matrix-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
       background: var(--section-alt);
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 1px solid var(--card-border);
     }
     .q-label {
       font-weight: 800;
-      font-size: 13px;
+      font-size: 13.5px;
       width: 48px;
+      color: var(--text-main);
     }
     .options-group {
-      display: flex;
-      gap: 12px;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 12px !important;
+      align-items: center !important;
     }
     .opt-bubble {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 2px solid #94a3b8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 13px;
-      color: var(--text-main);
-      background: var(--card-bg);
-      cursor: pointer;
-      user-select: none;
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 50% !important;
+      border: 2px solid #64748b !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: 800 !important;
+      font-size: 13.5px !important;
+      color: var(--text-main) !important;
+      background: var(--card-bg) !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      transition: transform 0.1s ease;
+    }
+    .opt-bubble:active {
+      transform: scale(0.92);
     }
     .opt-bubble.selected {
-      background: var(--text-main);
-      border-color: var(--text-main);
-      color: var(--card-bg);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      background: #3b82f6 !important;
+      border-color: #60a5fa !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4) !important;
     }
 
-    /* Upload Area */
+    /* Action Buttons */
     .btn-action {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       width: 100%;
-      padding: 13px;
-      border-radius: 10px;
+      padding: 14px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       color: #ffffff;
@@ -468,12 +504,11 @@
       user-select: none;
     }
     .btn-upload { background: var(--primary); }
-    .btn-camera { background: #0f172a; }
-    body.dark-mode .btn-camera { background: #1f2937; }
+    .btn-camera { background: #1e293b; border: 1px solid #334155; }
     .hidden-input { display: none !important; }
 
     .file-status-box {
-      border: 1.5px dashed #94a3b8;
+      border: 1.5px dashed var(--card-border);
       border-radius: 10px;
       padding: 12px;
       text-align: center;
@@ -513,28 +548,33 @@
 
     .btn-scan-trigger {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: var(--accent);
       color: #ffffff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 4px 14px var(--accent-glow);
+      transition: opacity 0.15s ease, transform 0.1s ease;
+    }
+    .btn-scan-trigger:active {
+      transform: scale(0.98);
     }
     .btn-scan-trigger:disabled {
-      background: #94a3b8;
+      background: #334155;
+      color: #64748b;
       cursor: not-allowed;
       box-shadow: none;
     }
 
-    /* 0 to 100 Real Dynamic Progress Bar */
+    /* REAL CONTINUOUS UNSTOPPABLE 0-100 PROGRESS BAR */
     .progress-box {
       display: none;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 12px;
       background: var(--section-alt);
       border: 1px solid var(--card-border);
     }
@@ -542,12 +582,12 @@
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 6px;
+      font-weight: 800;
+      margin-bottom: 8px;
     }
     .progress-bar-track {
       width: 100%;
-      height: 9px;
+      height: 8px;
       background: var(--card-border);
       border-radius: 6px;
       overflow: hidden;
@@ -555,25 +595,26 @@
     .progress-bar-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #2563eb, #16a34a);
-      transition: width 0.15s ease-out;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      border-radius: 6px;
+      transition: width 0.08s linear;
     }
     .progress-desc {
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
     }
 
-    /* Results Dashboard */
+    /* Results */
     .results-panel {
       display: none;
       margin-top: 8px;
     }
     .score-banner {
-      background: linear-gradient(135deg, #1e40af, #2563eb);
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
       color: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 20px 14px;
       text-align: center;
       margin-bottom: 12px;
@@ -585,7 +626,7 @@
       opacity: 0.9;
     }
     .score-banner .number {
-      font-size: 38px;
+      font-size: 42px;
       font-weight: 800;
       margin: 8px 0 12px;
     }
@@ -597,26 +638,25 @@
     .breakdown-item {
       background: rgba(255, 255, 255, 0.15);
       padding: 8px 2px;
-      border-radius: 6px;
+      border-radius: 8px;
     }
     .breakdown-item .val {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
     }
     .breakdown-item .lbl {
       font-size: 10px;
-      opacity: 0.85;
+      opacity: 0.9;
       margin-top: 2px;
     }
 
-    /* Dual Downloads */
     .btn-download-excel {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       background: var(--success);
       color: #ffffff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
@@ -624,11 +664,11 @@
     }
     .btn-download-pdf {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       background: var(--danger);
       color: #ffffff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
@@ -642,7 +682,7 @@
       text-align: center;
     }
     th, td {
-      padding: 8px 4px;
+      padding: 9px 4px;
       border-bottom: 1px solid var(--card-border);
     }
     th {
@@ -655,213 +695,35 @@
     .status-skp { color: var(--text-muted); }
     .status-inv { color: var(--warning); font-weight: 700; }
 
-    /* Infographics & Extended Sections */
-    .extended-section {
-      max-width: 960px;
-      margin: 40px auto;
-      padding: 0 16px;
-    }
-    .sec-title-box {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .sec-title-box h2 {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-    .sec-title-box p {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Flow Grid */
-    .flow-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .flow-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .flow-num {
-      width: 28px;
-      height: 28px;
-      background: var(--accent);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 13px;
-    }
-    .flow-card h4 {
-      font-size: 15px;
-      font-weight: 700;
-    }
-    .flow-card p {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-    .flow-visual-box {
-      background: var(--section-alt);
-      border: 1px dashed var(--card-border);
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    /* Compare Table */
-    .compare-table-wrapper {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      overflow-x: auto;
-    }
-    .compare-table-wrapper table {
-      font-size: 13px;
-    }
-    .compare-table-wrapper th, .compare-table-wrapper td {
-      padding: 12px 14px;
-      text-align: left;
-    }
-
-    /* FAQ Box */
-    .faq-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .faq-item {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .faq-question {
-      padding: 14px 16px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      user-select: none;
-    }
-    .faq-answer {
-      display: none;
-      padding: 0 16px 14px;
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-
-    /* Legal Content Box */
-    .legal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 20px;
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.7;
-    }
-    .legal-card h3 {
-      color: var(--text-main);
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
-
-    /* Huge Footer */
     footer {
-      background: #090d16;
-      color: #94a3b8;
-      padding: 50px 16px 30px;
-      border-top: 1px solid #1e293b;
-      margin-top: 60px;
-    }
-    .footer-container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 30px;
-    }
-    .footer-col h5 {
-      color: #ffffff;
-      font-size: 14px;
-      margin-bottom: 14px;
-    }
-    .footer-col ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      text-align: center;
+      padding: 40px 16px 20px;
       font-size: 12px;
-    }
-    .footer-col ul a {
-      color: #94a3b8;
-      text-decoration: none;
-    }
-    .footer-col ul a:hover {
-      color: #38bdf8;
-    }
-    .footer-bottom {
-      max-width: 960px;
-      margin: 40px auto 0;
-      padding-top: 20px;
-      border-top: 1px solid #1e293b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    @media (max-width: 600px) {
-      .hero-banner h1 { font-size: 20px; }
-      .breakdown { grid-template-columns: repeat(2, 1fr); }
-      .sub-nav-bar { justify-content: flex-start; }
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
     }
   </style>
 </head>
 <body>
 
-<!-- 1. Header & Navigation with Real 3-Line Hamburger -->
+<!-- Top Clean Navbar -->
 <nav class="top-navbar">
   <div class="nav-container">
-    <div style="display: flex; align-items: center; gap: 12px;">
+    <div class="nav-left">
       <button class="hamburger-btn" id="menuToggleBtn" onclick="toggleDrawer()" aria-label="Open Menu">
         <span></span>
         <span></span>
         <span></span>
       </button>
       <a href="index.html" class="brand-logo">
-        ⚡ Nischay OMR <span class="brand-badge" data-i18n="brand_sub">PRO v2.4 AI</span>
+        <span class="bolt">⚡</span> Nischay OMR
       </a>
     </div>
-
-    <div class="nav-right-tools">
-      <button class="nav-ctrl-btn" id="langToggleBtn" onclick="toggleLanguage()">🌐 English</button>
-      <button class="nav-ctrl-btn" id="themeToggleBtn" onclick="toggleTheme()">🌙 Dark</button>
-    </div>
+    <span class="brand-badge">PRO v2.4 AI</span>
   </div>
 </nav>
 
-<!-- Mobile Slide-In Navigation Drawer -->
+<!-- Slide-In Drawer Navigation (Language and Dark Mode Inside Here) -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeDrawer()"></div>
 
 <aside class="nav-drawer" id="navDrawer">
@@ -871,6 +733,18 @@
   </div>
 
   <div class="drawer-body">
+    <!-- Quick Controls inside drawer -->
+    <div class="drawer-quick-controls">
+      <div class="drawer-ctrl-row">
+        <span>थीम मोड</span>
+        <button class="switch-btn" id="themeSwitchBtn" onclick="toggleThemeLocal()">🌙 डार्क मोड</button>
+      </div>
+      <div class="drawer-ctrl-row">
+        <span>भाषा (Language)</span>
+        <button class="switch-btn" id="langSwitchBtn" onclick="alert('भाषा फ़ाइल जल्द जोड़ी जाएगी')">🌐 हिंदी</button>
+      </div>
+    </div>
+
     <div class="drawer-section-lbl">मुख्य नेविगेशन</div>
     <a href="#consoleSection" class="drawer-link" onclick="closeDrawer()">
       <span class="icon">🔍</span> <span>स्कैनर कंसोल</span>
@@ -878,60 +752,40 @@
     <a href="how_its_workes.html" class="drawer-link">
       <span class="icon">⚙️</span> <span>हाउ इट वर्क्स (OMR Flow)</span>
     </a>
-    <a href="#comparisonSection" class="drawer-link" onclick="closeDrawer()">
-      <span class="icon">📊</span> <span>AI vs पारंपरिक OMR</span>
-    </a>
 
-    <div class="drawer-section-lbl">सहायता एवं कानूनी नीति</div>
+    <div class="drawer-section-lbl">सहायता व नीतियां</div>
     <a href="faq.html" class="drawer-link">
-      <span class="icon">❓</span> <span>अक्सर पूछे जाने वाले सवाल (FAQ)</span>
+      <span class="icon">❓</span> <span>FAQ प्रश्नोत्तरी</span>
     </a>
     <a href="privacy.html" class="drawer-link">
-      <span class="icon">🛡️</span> <span>डेटा सुरक्षा (Privacy Policy)</span>
+      <span class="icon">🛡️</span> <span>डेटा सुरक्षा (Privacy)</span>
     </a>
     <a href="terms.html" class="drawer-link">
       <span class="icon">📜</span> <span>नियम एवं शर्तें (Terms)</span>
     </a>
   </div>
-
-  <div class="drawer-footer">
-    <button class="drawer-btn" onclick="toggleLanguage(); closeDrawer();">
-      🌐 भाषा बदलें (Hindi / Eng)
-    </button>
-    <button class="drawer-btn" onclick="toggleTheme(); closeDrawer();">
-      🌓 डार्क / लाइट मोड स्विच
-    </button>
-  </div>
 </aside>
 
 <!-- Sub Navigation Anchor Links -->
 <div class="sub-nav-bar">
-  <a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a>
+  <a href="#consoleSection">स्कैनर कंसोल</a>
   <a href="how_its_workes.html">हाउ इट वर्क्स ↗</a>
-  <a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a>
   <a href="faq.html">FAQ ↗</a>
   <a href="privacy.html">डेटा सुरक्षा ↗</a>
   <a href="terms.html">नियम व शर्तें ↗</a>
 </div>
 
-<!-- 2. Hero Showcase Banner -->
+<!-- Header Intro -->
 <header class="hero-banner">
-  <div class="hero-tag" data-i18n="hero_badge">⚡ AI-DRIVEN OMR SUITE 2026</div>
-  <h1 data-i18n="hero_title">स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
-  <p data-i18n="hero_desc">बिहार विद्यालय परीक्षा समिति (BSEB), प्रतियोगी परीक्षाओं एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।</p>
-  
-  <div class="hero-stats-row">
-    <div class="stat-pill">📈 <span data-i18n="stat_sheets">50,000+ कॉपियाँ जाँची गईं</span></div>
-    <div class="stat-pill">🎯 <span data-i18n="stat_accuracy">99.98% सटीकता दर</span></div>
-    <div class="stat-pill">⚡ <span data-i18n="stat_speed">0.8s औसत गति</span></div>
-    <div class="stat-pill">🛡️ <span data-i18n="stat_privacy">0% सर्वर स्टोरेज (सुरक्षित)</span></div>
-  </div>
+  <div class="hero-tag">⚡ AI-DRIVEN HIGH SPEED SCANNER</div>
+  <h1>स्मार्ट डिजिटल OMR मूल्यांकन प्रणाली</h1>
+  <p>बिहार विद्यालय परीक्षा समिति (BSEB) एवं कोचिंग संस्थानों के लिए 100% सटीक AI विज़न OMR चेकर।</p>
 </header>
 
-<!-- 3. Main Scanning Console -->
+<!-- Main Console -->
 <div class="main-wrapper" id="consoleSection">
 
-  <!-- Question Tabs & Dynamic Range Selector (5 to 100) -->
+  <!-- Questions Dynamic Selector -->
   <div class="app-card">
     <div class="card-head">
       <span>प्रश्नों की संख्या चुनें (Questions Limit)</span>
@@ -939,26 +793,26 @@
     </div>
 
     <div class="tabs-group">
-      <div class="tab-item active" onclick="setQuestionsQuick(20)" data-i18n="tab_20">20 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(50)" data-i18n="tab_50">50 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(80)" data-i18n="tab_80">80 सवाल</div>
-      <div class="tab-item" onclick="setQuestionsQuick(100)" data-i18n="tab_100">100 सवाल</div>
+      <div class="tab-item active" onclick="setQuestionsQuick(20)">20 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(50)">50 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(80)">80 सवाल</div>
+      <div class="tab-item" onclick="setQuestionsQuick(100)">100 सवाल</div>
     </div>
 
     <div class="slider-box">
       <div class="slider-info">
         <span>कस्टम सवाल संख्या:</span>
-        <span style="color:var(--accent); font-size:14px;"><strong id="rangeValDisplay">20</strong> सवाल</span>
+        <span style="color:#60a5fa;"><strong id="rangeValDisplay">20</strong> सवाल</span>
       </div>
       <input type="range" id="customQuestionRange" min="5" max="100" value="20" step="1" oninput="onSliderChange(this.value)">
     </div>
   </div>
 
-  <!-- Master Key Matrix Card -->
+  <!-- Master Key Card -->
   <div class="app-card">
     <div class="card-head">
-      <span data-i18n="card1_title">1. मास्टर उत्तर कुंजी (Answer Key)</span>
-      <span class="sub-hint" data-i18n="card1_sub">गोला छूकर सही उत्तर सेट करें</span>
+      <span>1. मास्टर उत्तर कुंजी (Answer Key)</span>
+      <span class="sub-hint">गोला छूकर सही उत्तर सेट करें</span>
     </div>
     <div id="matrixContainer"></div>
   </div>
@@ -966,21 +820,21 @@
   <!-- Upload and Scan Card -->
   <div class="app-card">
     <div class="card-head">
-      <span data-i18n="card2_title">2. छात्र की OMR शीट या PDF अपलोड करें</span>
+      <span>2. छात्र की OMR शीट अपलोड करें</span>
     </div>
 
     <label class="btn-action btn-upload">
-      <span data-i18n="btn_upload_file">📁 डिवाइस फ़ाइलें / Documents चुनें</span>
+      📁 डिवाइस फ़ाइलें / Documents चुनें
       <input type="file" id="fileUpload" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <label class="btn-action btn-camera">
-      <span data-i18n="btn_camera">📷 सीधे कैमरे से फ़ोटो खींचें</span>
+      📷 सीधे कैमरे से फ़ोटो खींचें
       <input type="file" id="cameraUpload" accept="image/*" capture="environment" class="hidden-input" onchange="handleFilePreview(event)">
     </label>
 
     <div class="file-status-box" id="statusBox">
-      <div id="statusText" data-i18n="status_no_file">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
+      <div id="statusText">अभी तक कोई फ़ाइल नहीं चुनी गई</div>
       <div id="fileNameDisplay" class="file-badge" style="display:none;"></div>
     </div>
 
@@ -988,300 +842,66 @@
       <img id="imagePreview" src="" alt="OMR Preview">
     </div>
 
-    <button type="button" class="btn-scan-trigger" id="btnStartScan" onclick="executeScanWithProgress()" disabled>
-      <span data-i18n="btn_start_scan">🔍 शीट स्कैन शुरू करें</span>
+    <button type="button" class="btn-scan-trigger" id="btnStartScan" onclick="executeScanWithDynamicProgress()" disabled>
+      🔍 शीट स्कैन शुरू करें
     </button>
 
-    <!-- 0 to 100 Real-Time Dynamic Progress Meter -->
+    <!-- UNSTOPPABLE REAL PROGRESS METER -->
     <div class="progress-box" id="progressWrapper">
       <div class="progress-head">
-        <span id="progressStateTitle" data-i18n="prog_starting">प्रोसेसिंग आरंभ...</span>
+        <span id="progressStateTitle">प्रोसेसिंग आरंभ...</span>
         <span id="progressPercentText">0%</span>
       </div>
       <div class="progress-bar-track">
         <div class="progress-bar-fill" id="progressBarFill"></div>
       </div>
-      <div class="progress-desc" id="progressStatusDetail" data-i18n="prog_uploading">इमेज डेटा AI इंजन पर भेजा जा रहा है...</div>
+      <div class="progress-desc" id="progressStatusDetail">इमेज डेटा तैयार किया जा रहा है...</div>
     </div>
   </div>
 
   <!-- Results Dashboard -->
   <div class="results-panel" id="resultsPanel">
     <div class="score-banner">
-      <h3 data-i18n="score_title">कुल प्राप्तांक (TOTAL MARKS)</h3>
+      <h3>कुल प्राप्तांक (TOTAL MARKS)</h3>
       <div class="number" id="scoreDisplay">0 / 20</div>
       
-      <!-- Student Name and Roll Display -->
       <div id="studentIdentityCard" style="background:rgba(255,255,255,0.18); padding:6px 12px; border-radius:8px; margin-bottom:12px; font-weight:700; font-size:13px;">
         छात्र: <span id="resStudentName">STUDENT</span> (रोल: <span id="resRollNo">N/A</span>)
       </div>
 
       <div class="breakdown">
-        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl" data-i18n="lbl_correct">सही (+1)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl" data-i18n="lbl_wrong">गलत (0)</div></div>
-        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl" data-i18n="lbl_invalid">अमान्य</div></div>
-        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl" data-i18n="lbl_skipped">छोड़ा</div></div>
+        <div class="breakdown-item"><div class="val" id="cntCor">0</div><div class="lbl">सही (+1)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntWro">0</div><div class="lbl">गलत (0)</div></div>
+        <div class="breakdown-item"><div class="val" id="cntInv">0</div><div class="lbl">अमान्य</div></div>
+        <div class="breakdown-item"><div class="val" id="cntSkp">0</div><div class="lbl">छोड़ा</div></div>
       </div>
     </div>
 
-    <!-- Dual Export Buttons -->
     <button type="button" class="btn-download-excel" onclick="downloadExcel()">
-      <span data-i18n="btn_download_excel">📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें</span>
+      📥 क्लास मार्कशीट एक्सेल (.xlsx) डाउनलोड करें
     </button>
 
     <button type="button" class="btn-download-pdf" onclick="downloadStudentPDF()">
-      <span data-i18n="btn_download_pdf">📄 छात्र मार्कशीट PDF डाउनलोड करें</span>
+      📄 छात्र मार्कशीट PDF डाउनलोड करें
     </button>
 
     <div class="app-card" style="overflow-x:auto;">
-      <div class="card-head" data-i18n="table_title">प्रश्न-वार विस्तृत रिपोर्ट (Question Breakdown)</div>
+      <div class="card-head">प्रश्न-वार विस्तृत रिपोर्ट</div>
       <div id="tableContainer"></div>
     </div>
   </div>
 
 </div>
 
-<!-- 4. How It Works (Infographics & Flow) -->
-<section class="extended-section" id="howItWorksSection">
-  <div class="sec-title-box">
-    <h2>⚙️ Nischay AI Vision OMR कैसे काम करता है?</h2>
-    <p>पारंपरिक पिक्सेल कटिंग की कमियों को दूर करने वाला 5-चरणीय न्यूरल स्कैनिंग फ्लो</p>
-  </div>
-
-  <div class="flow-grid">
-    <div class="flow-card">
-      <div class="flow-num">1</div>
-      <h4>रॉ इमेज कैप्चर व डेस्क्यू</h4>
-      <p>फोटो चाहे 10° तिरछी हो, परछाई हो या हाथ कांप गया हो—इंजन 4 कॉर्नर मार्करों से शीट को ऑटोमैटिक 90° सीधा करता है।</p>
-      <div class="flow-visual-box">📐 4-Point Perspective Warp</div>
-    </div>
-
-    <div class="flow-card">
-      <div class="flow-num">2</div>
-      <h4>हैंड-रिटन OCR से नाम व रोल नंबर</h4>
-      <p>शीट के शीर्ष पर छात्र द्वारा पेन से लिखे गए नाम व रोल नंबर को न्यूरल OCR पढ़ता है और छात्र के नाम व क्रमांक में बदलता है।</p>
-      <div class="flow-visual-box">🔤 Neural Text OCR Engine</div>
-    </div>
-
-    <div class="flow-card">
-      <div class="flow-num">3</div>
-      <h4>मल्टी-मॉडल बबल डिकोडिंग</h4>
-      <p>AI इंसानी आँख की तरह स्याही के दबाव और डार्कनेस को देखता है। आधी-अधूरी भरी पेंसिल या टिक-मार्क को भी सही पकड़ता है।</p>
-      <div class="flow-visual-box">👁️ AI Vision Density Scan</div>
-    </div>
-
-    <div class="flow-card">
-      <div class="flow-num">4</div>
-      <h4>मास्टर कुंजी मिलान व स्कोरिंग</h4>
-      <p>माइक्रोसेकंड में मास्टर आंसर की से मिलान कर +1, 0, अमान्य (डबल बबल) और छोड़े गए सवालों का सटीक स्कोर कार्ड बनाता है।</p>
-      <div class="flow-visual-box">⚡ Instant Scoring Logic</div>
-    </div>
-
-    <div class="flow-card">
-      <div class="flow-num">5</div>
-      <h4>कंबाइंड एक्सेल व प्रिंटेबल PDF</h4>
-      <p>पूरी क्लास के लिए एक्सेल स्प्रेडशीट (.xlsx) और हर छात्र के लिए आधिकारिक A4 PDF रिपोर्ट कार्ड 1-क्लिक पर निकालें।</p>
-      <div class="flow-visual-box">📄 Excel + Student Scorecard PDF</div>
-    </div>
-  </div>
-
-  <div style="text-align: center; margin-top: 20px;">
-    <a href="how_its_workes.html" style="color:var(--accent); font-weight:800; font-size:13px; text-decoration:none;">
-      विस्तृत गाइड और फ्लो डायग्राम देखें ➔
-    </a>
-  </div>
-</section>
-
-<!-- 5. Technology Comparison (OpenCV vs AI Vision) -->
-<section class="extended-section" id="comparisonSection">
-  <div class="sec-title-box">
-    <h2>📊 पारंपरिक OMR स्कैनर बनाम Nischay AI Vision</h2>
-    <p>जानिए हमारा सिस्टम पुराने पिक्सेल-काउंटिंग सॉफ्टवेयर से क्यों 100 गुना बेहतर है</p>
-  </div>
-
-  <div class="compare-table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>फ़ीचर / स्थिति</th>
-          <th>पारंपरिक OMR (पुराना तरीका)</th>
-          <th style="color:var(--accent);">Nischay AI Vision (PRO v2.4)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>तिरछी या मुड़ी हुई शीट</strong></td>
-          <td>❌ ग्रिड खिसक जाता है, 0/20 रिजल्ट आता है</td>
-          <td>✅ <strong>100% सटीक</strong> (ऑटो-अलाइन व पर्सपेक्टिव करेक्शन)</td>
-        </tr>
-        <tr>
-          <td><strong>छात्र का नाम व रोल नंबर</strong></td>
-          <td>❌ नहीं पढ़ पाता (सिर्फ बबल्स गिनता है)</td>
-          <td>✅ <strong>हैंडराइटिंग OCR</strong> द्वारा नाम व रोल नंबर ब्रैकेट में</td>
-        </tr>
-        <tr>
-          <td><strong>कैमरे की परछाई / फ़्लैश</strong></td>
-          <td>❌ परछाई को काला गोला मान लेता है</td>
-          <td>✅ <strong>कंट्रास्ट न्यूरल स्कैन</strong> स्याही और परछाई में अंतर समझता है</td>
-        </tr>
-        <tr>
-          <td><strong>कागज़ की बाध्यता</strong></td>
-          <td>❌ 100 GSM स्पेशल प्रिंटर कागज़ चाहिए</td>
-          <td>✅ <strong>साधारण A4 ज़ेरॉक्स कागज़</strong> पर भी 100% काम करता है</td>
-        </tr>
-        <tr>
-          <td><strong>हार्डवेयर आवश्यकता</strong></td>
-          <td>❌ 50,000 रु. का भारी OMR स्कैनर मशीन</td>
-          <td>✅ <strong>सिर्फ आपका स्मार्टफोन कैमरा</strong> या सादा वेब ब्राउज़र</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- 6. Frequently Asked Questions (FAQ) -->
-<section class="extended-section" id="faqSection">
-  <div class="sec-title-box">
-    <h2>❓ अक्सर पूछे जाने वाले सवाल (FAQ)</h2>
-    <p>शिक्षकों और कोचिंग संचालकों द्वारा पूछे जाने वाले सामान्य प्रश्न</p>
-  </div>
-
-  <div class="faq-container">
-    <div class="faq-item">
-      <div class="faq-question" onclick="toggleFaq(1)">
-        <span>1. क्या OMR शीट प्रिंट कराने के लिए कोई खास प्रिंटर या कागज़ चाहिए?</span>
-        <span id="faq-icon-1">+</span>
-      </div>
-      <div class="faq-answer" id="faq-ans-1">
-        बिल्कुल नहीं! आप अपनी कोचिंग या स्कूल की OMR शीट किसी भी साधारण 50 पैसे वाले ज़ेरॉक्स / फोटोकॉपी कागज़ पर प्रिंट करा सकते हैं। हमारा AI विज़न इंजन सादे कागज़ पर पेन के निशानों को भी आसानी से पढ़ लेता है।
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question" onclick="toggleFaq(2)">
-        <span>2. अगर छात्र ने गलती से दो गोले भर दिए तो क्या होगा?</span>
-        <span id="faq-icon-2">+</span>
-      </div>
-      <div class="faq-answer" id="faq-ans-2">
-        सिस्टम तुरंत उसे 'अमान्य' (INVALID) मार्क करेगा। उस प्रश्न के लिए कोई अंक नहीं जुड़ेगा और रिपोर्ट कार्ड में दोनों विकल्प (जैसे A, B) साफ-साफ दर्ज होंगे।
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question" onclick="toggleFaq(3)">
-        <span>3. क्या मोबाइल से फोटो खींचकर 50 से 100 सवालों की शीट चेक हो सकती है?</span>
-        <span id="faq-icon-3">+</span>
-      </div>
-      <div class="faq-answer" id="faq-ans-3">
-        हाँ, 5 सवाल से लेकर 100 सवालों तक की शीट आप सीधे मोबाइल के कैमरे से '📷 सीधे कैमरे से फ़ोटो खींचें' बटन दबाकर जाँच सकते हैं।
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question" onclick="toggleFaq(4)">
-        <span>4. क्लास का रिजल्ट एक्सेल और पीडीएफ में कैसे मिलेगा?</span>
-        <span id="faq-icon-4">+</span>
-      </div>
-      <div class="faq-answer" id="faq-ans-4">
-        स्कैन पूरा होते ही स्क्रीन पर दो हरे और लाल बटन दिखेंगे: एक से पूरी क्लास की कंबाइंड स्प्रेडशीट (.xlsx) और दूसरे से छात्र का आधिकारिक A4 प्रिंट-रेडी PDF स्कोरकार्ड तुरंत डाउनलोड हो जाएगा।
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align: center; margin-top: 18px;">
-    <a href="faq.html" style="color:var(--accent); font-weight:800; font-size:13px; text-decoration:none;">
-      सभी विस्तृत FAQ देखें ➔
-    </a>
-  </div>
-</section>
-
-<!-- 7. Data Privacy & Terms -->
-<section class="extended-section" id="privacySection">
-  <div class="sec-title-box">
-    <h2>🛡️ डेटा सुरक्षा एवं प्राइवेसी पॉलिसी (Privacy Policy)</h2>
-    <p>आपकी संस्था और छात्रों के डेटा की पूर्ण सुरक्षा हमारी सर्वोच्च प्राथमिकता है</p>
-  </div>
-
-  <div class="legal-card">
-    <h3>1. शून्य डेटा स्टोरेज (Zero Server Storage Policy)</h3>
-    <p>मूल्यांकन के लिए अपलोड की जाने वाली कोई भी OMR शीट या छात्र का व्यक्तिगत विवरण हमारे सर्वर की हार्ड डिस्क पर स्थायी रूप से स्टोर नहीं किया जाता। सारी फाइलें इन-मेमोरी रैम (RAM) में 2 सेकंड में प्रोसेस होती हैं और रिजल्ट जनरेट होते ही तुरंत नष्ट कर दी जाती हैं।</p>
-    <br>
-    <h3>2. एंड-टू-एंड एनक्रिप्शन (End-to-End SSL)</h3>
-    <p>आपके डिवाइस से सर्वर तक जाने वाला सारा डेटा 256-बिट HTTPS एन्क्रिप्टेड टनल से होकर गुजरता है। कोई भी तीसरा पक्ष आपके प्रश्न-पत्र या छात्रों की कॉपियों को नहीं देख सकता।</p>
-    
-    <div style="margin-top: 14px;">
-      <a href="privacy.html" style="color:var(--accent); font-weight:800; text-decoration:none;">
-        पूरी डेटा सुरक्षा नीति पढ़ें ➔
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="extended-section" id="termsSection">
-  <div class="sec-title-box">
-    <h2>📜 नियम एवं शर्तें (Terms of Service)</h2>
-    <p>Nischay OMR Pro प्लेटफ़ॉर्म उपयोग की शर्तें</p>
-  </div>
-
-  <div class="legal-card">
-    <p>1. यह प्लेटफ़ॉर्म शिक्षकों, कोचिंग संस्थानों, स्कूलों और छात्रों की परीक्षा प्रक्रिया को तेज़ और पारदर्शी बनाने हेतु एक शैक्षणिक व व्यावसायिक SaaS टूल है।</p>
-    <p>2. उपयोगकर्ता द्वारा अपलोड की गई सामग्री कॉपीराइट नियमों के अनुकूल होनी चाहिए। संस्था अपनी मास्टर आंसर की की शुद्धता के लिए स्वयं जिम्मेदार होगी।</p>
-    <p>3. AI विज़न इंजन 99.9% शुद्धता से कॉपियाँ जाँचता है, तथापि किसी विवाद की स्थिति में शिक्षक द्वारा अंतिम भौतिक सत्यापन मान्य होगा।</p>
-
-    <div style="margin-top: 14px;">
-      <a href="terms.html" style="color:var(--accent); font-weight:800; text-decoration:none;">
-        पूर्ण नियम व शर्तें पढ़ें ➔
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- 8. Mega Footer -->
 <footer>
-  <div class="footer-container">
-    <div class="footer-col">
-      <h5>⚡ Nischay OMR Pro</h5>
-      <p style="font-size:12px; line-height:1.6; color:#94a3b8;">
-        कोचिंग, स्कूल और प्रतियोगी परीक्षाओं के लिए भारत की सबसे तेज़ और सटीक AI-पावर्ड डिजिटल OMR मूल्यांकन प्रणाली।
-      </p>
-    </div>
-
-    <div class="footer-col">
-      <h5>त्वरित लिंक्स</h5>
-      <ul>
-        <li><a href="#consoleSection" data-i18n="nav_scanner">स्कैनर कंसोल</a></li>
-        <li><a href="how_its_workes.html">हाउ इट वर्क्स (Flow)</a></li>
-        <li><a href="#comparisonSection" data-i18n="nav_compare">AI vs पारंपरिक</a></li>
-        <li><a href="faq.html">FAQ प्रश्नोत्तरी</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h5>गोपनीयता व कानून</h5>
-      <ul>
-        <li><a href="privacy.html">डेटा सुरक्षा नीति</a></li>
-        <li><a href="terms.html">उपयोग की शर्तें</a></li>
-        <li><a href="mailto:support@nischaydesk.com">सहायता एवं संपर्क</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <div data-i18n="footer_copy">© 2026 NischayDesk. सर्वाधिकार सुरक्षित।</div>
-    <div>
-      <a href="#consoleSection" style="color:#38bdf8; text-decoration:none;" data-i18n="footer_back_top">वापस ऊपर जाएँ ↑</a>
-    </div>
-  </div>
+  © 2026 NischayDesk. सर्वाधिकार सुरक्षित।
 </footer>
 
-<!-- External Scripts (Root Files) -->
-<script src="translations.js"></script>
-<script src="theme_engine.js"></script>
 <script src="pdf_engine.js"></script>
-<script src="app.js?v=6001"></script>
+<script src="app.js?v=7001"></script>
 
 <script>
-  // Real 3-Line Hamburger Drawer Functions
+  // Drawer Toggler
   function toggleDrawer() {
     const drawer = document.getElementById("navDrawer");
     const overlay = document.getElementById("menuOverlay");
@@ -1309,7 +929,17 @@
     document.body.style.overflow = "";
   }
 
-  // Dynamic Slider Controller for 5 to 100 Questions
+  // Local Theme Switcher inside Menu
+  function toggleThemeLocal() {
+    const body = document.body;
+    const btn = document.getElementById("themeSwitchBtn");
+    body.classList.toggle("light-mode");
+    const isLight = body.classList.contains("light-mode");
+    btn.innerText = isLight ? "☀️ लाइट मोड" : "🌙 डार्क मोड";
+    localStorage.setItem("nischay_theme_pref", isLight ? "light" : "dark");
+  }
+
+  // Question Limit Slider
   function onSliderChange(val) {
     document.getElementById("rangeValDisplay").innerText = val;
     setQuestions(parseInt(val));
@@ -1321,57 +951,74 @@
     setQuestions(num);
   }
 
-  // 0 to 100 Dynamic Real-Time Progress Controller
-  function updateProgress(percent, title, detail) {
+  // ========================================================
+  // REAL CONTINUOUS UNSTOPPABLE 0-100 PROGRESS ENGINE
+  // ========================================================
+  function setProgressVal(p, title, desc) {
     const wrap = document.getElementById("progressWrapper");
     const fill = document.getElementById("progressBarFill");
     const text = document.getElementById("progressPercentText");
     const stTitle = document.getElementById("progressStateTitle");
-    const stDetail = document.getElementById("progressStatusDetail");
+    const stDesc = document.getElementById("progressStatusDetail");
 
     if (wrap) wrap.style.display = "block";
-    if (fill) fill.style.width = percent + "%";
-    if (text) text.innerText = Math.round(percent) + "%";
+    if (fill) fill.style.width = p + "%";
+    if (text) text.innerText = Math.floor(p) + "%";
     if (stTitle && title) stTitle.innerText = title;
-    if (stDetail && detail) stDetail.innerText = detail;
+    if (stDesc && desc) stDesc.innerText = desc;
   }
 
-  function resetProgress() {
-    const wrap = document.getElementById("progressWrapper");
-    const fill = document.getElementById("progressBarFill");
-    if (wrap) wrap.style.display = "none";
-    if (fill) fill.style.width = "0%";
-  }
+  async function executeScanWithDynamicProgress() {
+    let currentP = 2;
+    setProgressVal(currentP, "प्रोसेसिंग आरंभ...", "इमेज डेटा को एन्कोड किया जा रहा है...");
 
-  async function executeScanWithProgress() {
-    updateProgress(8, "फ़ाइल लोड हो रही है...", "इमेज डेटा को एन्कोड किया जा रहा है...");
-    
-    let simulatedProgress = 8;
-    const progressTimer = setInterval(() => {
-      if (simulatedProgress < 88) {
-        simulatedProgress += Math.random() * 8 + 4;
-        if (simulatedProgress > 88) simulatedProgress = 88;
-        
-        let msg = "शीट के अलाइनमेंट और 4 कोनों का विश्लेषण...";
-        if (simulatedProgress > 40) msg = "AI विज़न द्वारा छात्र नाम, रोल नंबर और बबल्स की पहचान जारी...";
-        if (simulatedProgress > 75) msg = "मास्टर आंसर की से मिलान...";
-        
-        updateProgress(simulatedProgress, "शीट स्कैनिंग प्रगति पर है...", msg);
+    let isApiCompleted = false;
+
+    // यह टाइमर बिना रुके लगातार स्मूथली बढ़ता रहेगा, कहीं अटकेगा नहीं
+    const progressInterval = setInterval(() => {
+      if (!isApiCompleted) {
+        if (currentP < 30) {
+          currentP += 2.5;
+          setProgressVal(currentP, "शीट विश्लेषण...", "कोनों और अलाइनमेंट का पता लगाया जा रहा है...");
+        } else if (currentP < 65) {
+          currentP += 1.8;
+          setProgressVal(currentP, "AI विज़न सक्रिय...", "छात्र का नाम और रोल नंबर पढ़ा जा रहा है...");
+        } else if (currentP < 96) {
+          // 88 पर रुकेगा नहीं, 96 तक धीरे-धीरे लगातार टिक करता रहेगा
+          currentP += 0.8;
+          setProgressVal(currentP, "मास्टर कुंजी मिलान...", "बबल्स और विकल्पों की तुलना जारी है...");
+        }
       }
-    }, 200);
+    }, 120);
 
     try {
       await executeScan();
-      clearInterval(progressTimer);
-      updateProgress(100, "सफल!", "परिणाम और मार्कशीट तैयार है।");
+      isApiCompleted = true;
+      clearInterval(progressInterval);
+
+      // सर्वर डेटा मिलते ही तेजी से 100% पूरा होगा
+      setProgressVal(100, "सफल!", "मूल्यांकन संपन्न, परिणाम तैयार है।");
       setTimeout(() => {
-        resetProgress();
-      }, 800);
+        const wrap = document.getElementById("progressWrapper");
+        if (wrap) wrap.style.display = "none";
+      }, 700);
+
     } catch (err) {
-      clearInterval(progressTimer);
-      resetProgress();
+      isApiCompleted = true;
+      clearInterval(progressInterval);
+      const wrap = document.getElementById("progressWrapper");
+      if (wrap) wrap.style.display = "none";
     }
   }
+
+  // Load Saved Theme
+  window.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("nischay_theme_pref") === "light") {
+      document.body.classList.add("light-mode");
+      const btn = document.getElementById("themeSwitchBtn");
+      if (btn) btn.innerText = "☀️ लाइट मोड";
+    }
+  });
 </script>
 </body>
 </html>
